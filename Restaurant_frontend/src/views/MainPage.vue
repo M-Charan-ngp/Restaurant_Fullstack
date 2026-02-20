@@ -40,7 +40,7 @@ const handleLogout = () => {
   <v-app :style="{ '--v-theme-primary': authStore.themeColor }">
     <v-app-bar color="primary" density="compact">
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
-      <v-app-bar-title>QuickDine</v-app-bar-title>
+      <v-app-bar-title>Restaurant Reservation system</v-app-bar-title>
       <v-spacer></v-spacer>
       
       <v-btn icon to="/cart" v-if="authStore.isCustomer"> <v-badge 
