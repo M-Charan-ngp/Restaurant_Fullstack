@@ -6,7 +6,7 @@ export const AuthService = {
 }
 
 export const PublicService = {
-  getMenu: () => api.get('/menu'),
+  getMenu: () => api.get('customer/menu'),
 }
 
 export const CustomerService = {

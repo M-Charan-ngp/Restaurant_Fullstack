@@ -42,7 +42,14 @@ async index({ user, request, response }: HttpContext) {
     if (!reservation) {
         return response.forbidden({ message: 'Invalid reservation for this user.' })
     }
-
+    const existingOrder = await Order.findBy('reservation_id', payload.reservationId)
+  
+  if (existingOrder) {
+    return response.badRequest({
+      status: false,
+      message: "An order has already been placed for this reservation."
+    })
+  }
     const transaction = await db.transaction()
 
     try {

@@ -45,9 +45,6 @@ const getStatusColor = (status) => {
               Party Size: <strong>{{ res.guestCount }} People</strong>
             </v-list-item>
           </v-list>
-          <v-alert v-if="res.status === 'pending'" border="start" color="info" variant="tonal" class="mt-2">
-            Please arrive 10 minutes before your time slot.
-          </v-alert>
         </v-expansion-panel-text>
       </v-expansion-panel>
     </v-expansion-panels>
@@ -56,7 +53,6 @@ const getStatusColor = (status) => {
       v-else
       icon="mdi-calendar-blank"
       title="No Reservations Yet"
-      text="Book a table to enjoy our delicious menu!"
     >
       <v-btn color="primary" class="mt-4" to="/book">Book Now</v-btn>
     </v-empty-state>

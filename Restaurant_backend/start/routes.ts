@@ -9,27 +9,16 @@ const ReservationsController = () => import('#controllers/reservations_controlle
 const OrdersController = () => import('#controllers/order_controller')
 
 router.group(() => {
-  
-  /*
-  |--------------------------------------------------------------------------
-  | 1. Open Access (No Login Required)
-  |--------------------------------------------------------------------------
-  */
   router.post('/signup', [AuthController, 'signup'])
   router.post('/login', [AuthController, 'login'])
-  router.get('/menu', [MenuController, 'index'])
 
-  /*
-  |--------------------------------------------------------------------------
-  | 2. Protected Area (Must be Logged In)
-  |--------------------------------------------------------------------------
-  */
   router.group(() => {
 
     // CUSTOMER ROUTES (Role ID: 1, 2, 3)
     router.group(() => {
       router.get('/availability', [ReservationsController, 'checkAvailability'])
       router.post('/reservations', [ReservationsController, 'store'])
+      router.get('/menu', [MenuController, 'index'])
       router.get('/my-reservations', [ReservationsController, 'myReservations'])
       router.post('/orders', [OrdersController, 'store'])
       router.patch('/orders/:id/cancel', [OrdersController, 'cancel']).where('id', router.matchers.number())
