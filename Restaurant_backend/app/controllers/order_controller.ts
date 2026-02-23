@@ -44,12 +44,12 @@ async index({ user, request, response }: HttpContext) {
     }
     const existingOrder = await Order.findBy('reservation_id', payload.reservationId)
   
-  if (existingOrder) {
-    return response.badRequest({
-      status: false,
-      message: "An order has already been placed for this reservation."
-    })
-  }
+    if (existingOrder) {
+      return response.badRequest({
+        status: false,
+        message: "An order has already been placed for this reservation."
+      })
+    }
     const transaction = await db.transaction()
 
     try {
@@ -64,18 +64,15 @@ async index({ user, request, response }: HttpContext) {
         await order.save()
 
         for (const item of payload.items) {
-        const menuItem = await MenuItem.findOrFail(item.menuItemId)
-        
-        const orderItem = new OrderItem()
-        orderItem.orderId = order.id
-        orderItem.menuItemId = item.menuItemId
-        orderItem.quantity = item.quantity
-        orderItem.unitPrice = menuItem.price
-        
-        totalAmount += Number(menuItem.price) * item.quantity
-        
-        orderItem.useTransaction(transaction)
-        await orderItem.save()
+          const menuItem = await MenuItem.findOrFail(item.menuItemId)
+          const orderItem = new OrderItem()
+          orderItem.orderId = order.id
+          orderItem.menuItemId = item.menuItemId
+          orderItem.quantity = item.quantity
+          orderItem.unitPrice = menuItem.price
+          totalAmount += Number(menuItem.price) * item.quantity
+          orderItem.useTransaction(transaction)
+          await orderItem.save()
         }
 
         order.totalAmount = totalAmount

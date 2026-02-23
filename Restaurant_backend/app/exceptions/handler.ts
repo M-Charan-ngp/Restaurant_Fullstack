@@ -5,9 +5,6 @@ import { errors as vineErrors } from '@vinejs/vine'
 import { errors as lucidErrors } from '@adonisjs/lucid'
 
 export default class HttpExceptionHandler extends ExceptionHandler {
-  /**
-   * Show stack traces only when NOT in production
-   */
   protected debug = !app.inProduction
 
   async handle(error: any, ctx: HttpContext) {

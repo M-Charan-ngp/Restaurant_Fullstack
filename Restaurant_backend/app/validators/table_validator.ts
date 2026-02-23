@@ -1,4 +1,3 @@
-// app/validators/table.ts
 import vine from '@vinejs/vine'
 
 /**

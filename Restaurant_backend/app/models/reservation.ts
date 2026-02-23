@@ -1,4 +1,3 @@
-// app/Models/Reservation.ts
 import { DateTime } from 'luxon'
 import { BaseModel, column, belongsTo, hasOne } from '@adonisjs/lucid/orm'
 import User from './user.js'

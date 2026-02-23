@@ -1,4 +1,3 @@
-// app/validators/reservation.ts
 import vine from '@vinejs/vine'
 
 export const createReservationValidator = vine.compile(

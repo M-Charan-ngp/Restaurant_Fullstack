@@ -27,7 +27,6 @@ router.group(() => {
     .prefix('/customer')
     .use(middleware.role([1, 2, 3]))
 
-
     // STAFF ROUTES (Role ID: 2, 3)
     router.group(() => {
       router.get('/reservations', [ReservationsController, 'index'])
@@ -35,7 +34,6 @@ router.group(() => {
       router.patch('/reservations/:id/status', [ReservationsController, 'updateStatus']).where('id', router.matchers.number())
       router.get('/kitchen/orders', [OrdersController, 'kitchenView'])
       router.patch('/orders/:id/status', [OrdersController, 'updateStatus']).where('id', router.matchers.number())
-      
       router.patch('/menu/:id/toggle', [MenuController, 'toggleAvailability']).where('id', router.matchers.number())
     })
     .prefix('/staff')

@@ -4,7 +4,6 @@ import Table from '#models/table'
 import { HttpContext } from '@adonisjs/core/http'
 import { createReservationValidator, updateReservationStatusValidator, availabilityValidator, reservationQueryValidator } from '#validators/reservation_validator'
 import { paginationValidator } from '#validators/common_validator'
-
 import db from '@adonisjs/lucid/services/db'
 
 export default class ReservationsController {
@@ -81,6 +80,7 @@ async index({ request, response }: HttpContext) {
     
     return response.ok(reservations)
 }
+
 async myReservations({ user, request, response }: HttpContext) {
   const { page = 1, limit = 10 } = await request.validateUsing(paginationValidator)
 
@@ -99,6 +99,7 @@ async myReservations({ user, request, response }: HttpContext) {
 
   return response.ok(reservations)
 }
+
     async updateStatus({ params, request, response }: HttpContext) {
         const reservation = await Reservation.findOrFail(params.id)
         const { status } = await request.validateUsing(updateReservationStatusValidator)

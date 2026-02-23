@@ -6,6 +6,7 @@ import { paginationValidator } from '#validators/common_validator'
 export default class TablesController {
 
   async index({ response }: HttpContext) {
+    
     const tables = await Table.query()
       .orderBy('table_number', 'asc')
       

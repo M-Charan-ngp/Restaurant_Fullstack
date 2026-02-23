@@ -1,4 +1,3 @@
-// app/controllers/menu_controller.ts
 import MenuItem from '#models/menu_item'
 import { HttpContext } from '@adonisjs/core/http'
 import { createMenuValidator, updateMenuValidator } from '#validators/menu_validator'
