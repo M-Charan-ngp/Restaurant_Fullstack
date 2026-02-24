@@ -1,20 +1,27 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { ref } from 'vue'
 import { useMenuStore } from '@/stores/menu'
 
 const menuStore = useMenuStore()
 const showDialog = ref(false)
 const editMode = ref(false)
 const form = ref({ id: null, name: '', category: 'Main Course', price: 0, description: '', isAvailable: true })
-
-onMounted(() => menuStore.fetchMenuforStaff())
+const headers = [
+        { title: 'Dish Name', key: 'name' },
+        { title: 'Category', key: 'category' },
+        { title: 'Price', key: 'price', align: 'end' },
+        { title: 'Status', key: 'isAvailable' },
+        { title: 'Actions', key: 'actions', sortable: false, align: 'end' }
+      ]
+const loadItems = async (options) => {
+  await menuStore.fetchMenuforStaff(options.page, options.itemsPerPage)
+}
 
 const openCreate = () => {
   editMode.value = false
   form.value = { id: null, name: '', category: 'Main Course', price: 0, description: '', isAvailable: true }
   showDialog.value = true
 }
-
 const openEdit = (item) => {
   editMode.value = true
   form.value = { ...item }
@@ -42,25 +49,20 @@ const handleSave = async () => {
       <v-btn prepend-icon="mdi-plus" color="primary" @click="openCreate">Add Dish</v-btn>
     </div>
 
-    <v-data-table
-      :headers="[
-        { title: 'Dish Name', key: 'name' },
-        { title: 'Category', key: 'category' },
-        { title: 'Price', key: 'price', align: 'end' },
-        { title: 'Status', key: 'isAvailable' },
-        { title: 'Actions', key: 'actions', sortable: false, align: 'end' }
-      ]"
+    <v-data-table-server
+      :headers="headers"
       :items="menuStore.items"
       :loading="menuStore.loading"
+      :items-length="menuStore.pagination.total"
+      :page="menuStore.pagination.currentPage"
+      @update:options="loadItems"
     >
       <template v-slot:item.price="{ item }">₹{{ item.price }}</template>
-
       <template v-slot:item.isAvailable="{ item }">
         <v-chip :color="item.isAvailable ? 'success' : 'error'" size="x-small" label>
-          {{ item.isAvailable ? 'Available' : 'Sold Out' }}
+          {{ item.isAvailable ? 'Available' : 'Not Available' }}
         </v-chip>
       </template>
-
       <template v-slot:item.actions="{ item }">
         <v-btn icon="mdi-pencil" variant="text" size="small" color="info" @click="openEdit(item)"></v-btn>
         <v-btn 
@@ -71,7 +73,7 @@ const handleSave = async () => {
           @click="menuStore.toggleAvailability(item.id)"
         ></v-btn>
       </template>
-    </v-data-table>
+    </v-data-table-server>
 
     <v-dialog v-model="showDialog" max-width="500">
       <v-card :title="editMode ? 'Edit Dish' : 'New Dish'">

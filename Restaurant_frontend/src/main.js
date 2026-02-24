@@ -5,6 +5,7 @@ import { createPinia } from 'pinia'
 import 'vuetify/styles'
 import '@mdi/font/css/materialdesignicons.css'
 import { createVuetify } from 'vuetify'
+import { useAuthStore } from './stores/auth'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 import 'unfonts.css'
@@ -16,9 +17,14 @@ const vuetify = createVuetify({
   directives,
   ssr: true,
 })
+
 const app = createApp(App)
 
+
+
 app.use(createPinia())
+const authStore = useAuthStore()
+authStore.init()
 app.use(router)
 app.use(vuetify)
 

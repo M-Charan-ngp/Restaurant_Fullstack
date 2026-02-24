@@ -52,7 +52,9 @@ export const useReservationStore = defineStore('reservation', () => {
     const fetchStaffReservations = async (date, page = 1) => {
         loading.value = true
         try {
-            const response = await StaffService.getReservations(date, page)
+            const pageToFetch = typeof page === 'number' ? page : 1
+            const limitToFetch = typeof limit === 'number' ? limit: 10
+            const response = await StaffService.getReservations(date, pageToFetch,limitToFetch)
             staffReservations.value = response.data.data
             pagination.value = response.data.meta
         } finally {

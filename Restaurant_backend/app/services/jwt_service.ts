@@ -7,6 +7,10 @@ export class JwtService {
   }
 
   static verify(token: string) {
+    try{
       return jwt.verify(token, env.get('APP_KEY'))
+    }catch(error){
+      throw error
+    }
   }
 }

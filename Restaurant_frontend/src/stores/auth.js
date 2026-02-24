@@ -5,7 +5,6 @@ import { jwtDecode } from 'jwt-decode'
 import { AuthService } from '@/services/api_services'
 
 export const useAuthStore = defineStore('auth', () => {
-    // Reactive State
     const token = ref(Cookies.get('auth_token') || null)
     const user = ref(null)
     const themeColor = ref(localStorage.getItem('app_theme') || '#1976D2') // Default Vuetify Blue

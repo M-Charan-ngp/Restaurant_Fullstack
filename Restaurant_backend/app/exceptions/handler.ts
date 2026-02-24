@@ -26,7 +26,6 @@ export default class HttpExceptionHandler extends ExceptionHandler {
     }
 
     // 3. Database Conflict (Duplicate Entry)
-    // Useful for unique table_number or email
     if (error.code === 'ER_DUP_ENTRY' || error.code === '23505') {
       return ctx.response.status(409).send({
         status: false,
@@ -35,16 +34,13 @@ export default class HttpExceptionHandler extends ExceptionHandler {
     }
 
     // 4. JWT Authentication Errors
-    const jwtErrors = ['TokenExpiredError', 'JsonWebTokenError']
-    if (jwtErrors.includes(error.name) || error.status === 401) {
-      return ctx.response.status(401).send({
-        status: false,
-        code: error.name === 'TokenExpiredError' ? 'E_JWT_EXPIRED' : 'E_UNAUTHORIZED',
-        message: error.name === 'TokenExpiredError' 
-          ? 'Session expired. Please login again.' 
-          : 'Invalid or missing authentication token.',
-      })
-    }
+    if (error.name === 'TokenExpiredError' || error.code === 'E_JWT_EXPIRED') {
+    return ctx.response.status(401).send({
+      status: false,
+      code: 'E_JWT_EXPIRED',
+      message: 'Session expired. Please login again.',
+    })
+  }
 
     // 5. Forbidden Access (Role Middleware failures)
     if (error.status === 403) {

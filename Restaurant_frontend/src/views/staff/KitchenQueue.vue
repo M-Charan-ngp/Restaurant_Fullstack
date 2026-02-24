@@ -4,10 +4,10 @@ import { useOrderStore } from '@/stores/order'
 
 const orderStore = useOrderStore()
 
-// Poll for new orders every 30 seconds
 let pollInterval
 onMounted(() => {
   orderStore.fetchKitchenQueue()
+  console.log(orderStore.kitchenOrders)
   pollInterval = setInterval(() => orderStore.fetchKitchenQueue(), 30000)
 })
 

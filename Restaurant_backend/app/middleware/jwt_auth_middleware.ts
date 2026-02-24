@@ -12,7 +12,8 @@ export default class JwtAuthMiddleware {
     }
 
     const token = authHeader.split(' ')[1]
-    const payload = JwtService.verify(token) as { id: number; name: string; role: number }
+    try{
+      const payload = JwtService.verify(token) as { id: number; name: string; role: number }
 
     if (!payload || !payload.id) {
       return ctx.response.unauthorized({ message: 'Invalid or expired token' })
@@ -24,5 +25,9 @@ export default class JwtAuthMiddleware {
     }
     ctx.user = user 
     return next()
+    }catch (error) {
+      throw error 
+    }
+    
   }
 }

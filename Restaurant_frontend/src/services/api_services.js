@@ -24,10 +24,11 @@ export const StaffService = {
   updateReservationStatus: (id, status) => 
     api.patch(`/staff/reservations/${id}/status`, { status }),
   getKitchenOrders: (page = 1) => api.get(`/staff/kitchen/orders?page=${page}`),
-  ViewMenu: (pageNumber = 1) => {
+  ViewMenu: (pageNumber = 1,limit=10) => {
     return api.get('/staff/menu', { 
       params: { 
-        page: pageNumber 
+        page: pageNumber,
+        limit:limit
       } 
     })
   },

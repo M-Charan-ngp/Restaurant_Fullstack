@@ -41,7 +41,7 @@ const getStatusColor = (status) => {
                 {{ item.quantity }}x {{ item.menuItem?.name }}
               </v-list-item-title>
               <template v-slot:append>
-                <span class="text-caption">${{ (item.quantity * item.menuItem?.price).toFixed(2) }}</span>
+                <span class="text-caption">₹{{ (item.quantity * item.menuItem?.price).toFixed(2) }}</span>
               </template>
             </v-list-item>
           </v-list>
@@ -51,7 +51,7 @@ const getStatusColor = (status) => {
           <v-card-item class="bg-grey-lighten-4">
             <div class="d-flex justify-space-between align-center">
               <span class="text-subtitle-2">Total Amount</span>
-              <span class="text-h6 font-weight-bold">${{ order.totalAmount }}</span>
+              <span class="text-h6 font-weight-bold">₹{{ order.totalAmount }}</span>
             </div>
           </v-card-item>
         </v-card>

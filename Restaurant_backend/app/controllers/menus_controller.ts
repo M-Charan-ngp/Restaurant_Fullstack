@@ -17,7 +17,9 @@ export default class MenuController {
 
   async adminIndex({request, response }: HttpContext) {
     const { page = 1, limit = 20 } = await request.validateUsing(paginationValidator)
+    console.log(page,limit);
     const items = await MenuItem.query().orderBy('category', 'asc').paginate(page,limit)
+    console.log(items)
     return response.ok(items)
   }
 

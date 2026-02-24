@@ -5,11 +5,17 @@ import { useReservationStore } from '@/stores/reservation'
 const reservationStore = useReservationStore()
 const selectedDate = ref(new Date().toISOString().substr(0, 10))
 const statuses = ['pending', 'confirmed', 'arrived', 'cancelled', 'completed']
-
+const headers = [
+        { title: 'Time', key: 'timeSlot' },
+        { title: 'Customer', key: 'user.fullName' },
+        { title: 'Table', key: 'table.tableNumber' },
+        { title: 'Guests', key: 'guestCount' },
+        { title: 'Status', key: 'status' },
+        { title: 'Actions', key: 'actions', sortable: false }
+      ]
 const loadData = () => {
   reservationStore.fetchStaffReservations(selectedDate.value)
 }
-
 onMounted(loadData)
 watch(selectedDate, loadData)
 
@@ -30,17 +36,13 @@ const updateStatus = async (id, status) => {
       </v-col>
     </v-row>
 
-    <v-data-table
-      :headers="[
-        { title: 'Time', key: 'timeSlot' },
-        { title: 'Customer', key: 'user.fullName' },
-        { title: 'Table', key: 'table.tableNumber' },
-        { title: 'Guests', key: 'guestCount' },
-        { title: 'Status', key: 'status' },
-        { title: 'Actions', key: 'actions', sortable: false }
-      ]"
+    <v-data-table-server
+      :headers="headers"
       :items="reservationStore.staffReservations"
       :loading="reservationStore.loading"
+      :items-length="reservationStore.pagination.total"
+      :page="reservationStore.pagination.currentPage"
+      @update:options="loadItems"
     >
       <template v-slot:item.status="{ item }">
         <v-chip :color="item.status === 'arrived' ? 'green' : 'blue'" size="small">
@@ -60,6 +62,6 @@ const updateStatus = async (id, status) => {
           </v-list>
         </v-menu>
       </template>
-    </v-data-table>
+    </v-data-table-server>
   </v-container>
 </template>

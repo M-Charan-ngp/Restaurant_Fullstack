@@ -10,7 +10,7 @@ export const useMenuStore = defineStore('menu', () => {
     const loading = ref(false)
     const pagination = ref({
         total: 0,
-        perPage: 15,
+        limit: 10,
         currentPage: 1,
         lastPage: 1
     })
@@ -19,7 +19,7 @@ export const useMenuStore = defineStore('menu', () => {
         loading.value = true
         try {
             await AdminService.updateMenuItem(id, payload)
-            await fetchMenu(pagination.value.currentPage) // Refresh current page data
+            await fetchMenuforStaff(pagination.value.currentPage, pagination.value.limit) 
             return { success: true }
         } catch (err) {
             return { 
@@ -52,16 +52,22 @@ export const useMenuStore = defineStore('menu', () => {
             loading.value = false
         }
     }
-const fetchMenuforStaff = async (page = 1) => {
+const fetchMenuforStaff = async (page = 1,limit=10) => {
     loading.value = true
     try {
         const pageToFetch = typeof page === 'number' ? page : 1
+        const limitToFetch = typeof limit === 'number' ? limit: 10
         
-        const response = await StaffService.ViewMenu(pageToFetch)
-        
+        const response = await StaffService.ViewMenu(pageToFetch,limitToFetch)
         if (response && response.data) {
-            items.value = response.data.data
-            pagination.value = response.data.meta || pagination.value
+            const { data, meta } = response.data
+            console.log("Meta inside store",meta)
+            items.value = data
+            pagination.value.total = meta.total
+            pagination.value.limit = meta.perPage
+            pagination.value.currentPage = meta.currentPage
+            pagination.value.lastPage = meta.lastPage
+            console.log("Total inside store",pagination.value.total)
         }
         
         return { success: true }
@@ -92,7 +98,11 @@ const fetchMenuforStaff = async (page = 1) => {
             const response = await StaffService.toggleMenuAvailability(id)
             const index = items.value.findIndex(item => item.id === id)
             if (index !== -1) {
-                items.value[index].isAvailable = response.data.isAvailable
+                const newValue = response.data.isAvailable ?? !items.value[index].isAvailable
+                items.value[index] = { 
+                    ...items.value[index], 
+                    isAvailable: newValue
+                }
             }
             return { success: true }
         } catch (err) {
