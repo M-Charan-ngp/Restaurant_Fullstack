@@ -20,7 +20,7 @@ export default class OrderItem extends BaseModel {
   @column()
   declare unitPrice: number
 
-  @column.dateTime({ autoCreate: true })
+  @column.dateTime({ autoCreate: true, serializeAs: null })
   declare createdAt: DateTime
 
   @belongsTo(() => Order)
