@@ -10,7 +10,7 @@ const loading = ref(false)
 const confirmPassword = ref('')
 const togglepass = ref(false) 
 const toggleconfirmpass = ref(false)
-
+const emit = defineEmits(['success'])
 const roleItems = [
     { title: 'Customer', value: 1 },
     { title: 'Staff', value: 2 },
@@ -23,8 +23,16 @@ const emailrule = [
 ]
 
 const rule = [value => !!value || `Field is compulsory`]
-
+const phonerule = [value => /^[0-9]{10}$/.test(value) || 'Invalid phone']
 const handleSubmit = async () => {
+  if (!newUser.value.fullName || !newUser.value.email || !newUser.value.password || !newUser.value.phoneNumber) {
+        alert("Please fill all the values")
+        return
+    }
+    if (newUser.value.password !== confirmPassword.value) {
+        alert("Passwords do not match!")
+        return
+    }
     if (newUser.value.password !== confirmPassword.value) {
         alert("Passwords do not match!")
         return
@@ -36,7 +44,7 @@ const handleSubmit = async () => {
 
     if (result.success) {
         alert("Registration successful! Please login.")
-        // Optionally switch the parent view to login mode
+        emit('success')
     } else {
         alert(result.error)
     }
@@ -66,7 +74,7 @@ const handleSubmit = async () => {
 
       <v-text-field
         v-model="newUser.phoneNumber"
-        :rules="rule"
+        :rules="[rule,phonerule]"
         label="Phone Number"
         prepend-inner-icon="mdi-phone"
         variant="outlined"
