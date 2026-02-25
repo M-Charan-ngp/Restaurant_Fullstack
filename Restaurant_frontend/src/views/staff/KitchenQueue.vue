@@ -1,13 +1,13 @@
 <script setup>
 import { onMounted, onUnmounted } from 'vue'
 import { useOrderStore } from '@/stores/order'
+import { formatDate, formatTime } from '@/utils/formats'
 
 const orderStore = useOrderStore()
 
 let pollInterval
 onMounted(() => {
   orderStore.fetchKitchenQueue()
-  console.log(orderStore.kitchenOrders)
   pollInterval = setInterval(() => orderStore.fetchKitchenQueue(), 30000)
 })
 
@@ -29,19 +29,37 @@ const getStatusColor = (status) => {
  
     <v-row> 
       <v-col v-for="order in orderStore.kitchenOrders" :key="order.id" cols="12" md="6" lg="4"> 
-        <v-card border variant="outlined"> 
+        <v-card border variant="outlined" class="rounded-lg elevation-2"> 
           <v-card-item> 
             <template v-slot:prepend> 
-              <v-chip :color="getStatusColor(order.status)" size="small" class="text-uppercase"> 
+              <v-chip :color="getStatusColor(order.status)" size="small" class="text-uppercase font-weight-bold"> 
                 {{ order.status }} 
               </v-chip> 
             </template> 
-            <v-card-title>Table {{ order.reservation?.table?.tableNumber }}</v-card-title> 
-            <v-card-subtitle>Order #{{ order.id }}</v-card-subtitle> 
+            
+            <v-card-title class="d-flex align-center">
+              Table {{ order.reservation?.table?.tableNumber }}
+              <v-spacer></v-spacer>
+              <span class="text-caption text-medium-emphasis">
+                <v-icon size="small" icon="mdi-account-group" start></v-icon>
+                {{ order.reservation?.guestCount }}
+              </span>
+            </v-card-title> 
+
+            <v-card-subtitle class="mt-1">
+              <div class="d-flex align-center">
+                <v-icon size="small" icon="mdi-clock-outline" start></v-icon>
+                {{ formatTime(order.reservation?.timeSlot) }}
+                <span class="mx-1">-</span>
+                {{ formatTime(order.reservation?.timeSlotEnd) }}
+              </div>
+              <div class="text-caption">
+                <v-icon size="x-small" icon="mdi-calendar" start></v-icon>
+                {{ formatDate(order.reservation?.reservationDate) }} | Order #{{ order.id }}
+              </div>
+            </v-card-subtitle> 
           </v-card-item> 
- 
           <v-divider></v-divider> 
- 
           <v-list density="compact"> 
             <v-list-item v-for="item in order.items" :key="item.id"> 
               <template v-slot:prepend> 

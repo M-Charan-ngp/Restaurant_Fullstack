@@ -18,19 +18,17 @@ const roleItems = [
 ]
 
 const emailrule = [
-    value => !!value || 'Email is compulsory.',
+    value => !!value || 'Email is required.',
     value => /^\S+@\S+\.\S+$/.test(value) || 'Invalid email'
 ]
 
-const rule = [value => !!value || `Field is compulsory`]
-const phonerule = [value => /^[0-9]{10}$/.test(value) || 'Invalid phone']
+const rule = [value => !!value || `Field is required`]
+const phonerule = [
+  value => !!value || 'Phone no is required.',
+  value => /^[0-9]{10}$/.test(value) || 'Invalid phone']
 const handleSubmit = async () => {
   if (!newUser.value.fullName || !newUser.value.email || !newUser.value.password || !newUser.value.phoneNumber) {
         alert("Please fill all the values")
-        return
-    }
-    if (newUser.value.password !== confirmPassword.value) {
-        alert("Passwords do not match!")
         return
     }
     if (newUser.value.password !== confirmPassword.value) {
@@ -74,7 +72,7 @@ const handleSubmit = async () => {
 
       <v-text-field
         v-model="newUser.phoneNumber"
-        :rules="[rule,phonerule]"
+        :rules="phonerule"
         label="Phone Number"
         prepend-inner-icon="mdi-phone"
         variant="outlined"

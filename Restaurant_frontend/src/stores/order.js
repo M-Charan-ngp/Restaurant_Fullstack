@@ -88,8 +88,8 @@ export const useOrderStore = defineStore('order', () => {
         loading.value = true
         try {
             const response = await StaffService.getKitchenOrders(page)
-            kitchenOrders.value = response.data.data
-            pagination.value = response.data.meta
+            kitchenOrders.value = response.data.orders.data
+            pagination.value = response.data.orders.meta
         } finally {
             loading.value = false
         }

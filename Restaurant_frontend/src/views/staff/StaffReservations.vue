@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
 import { useReservationStore } from '@/stores/reservation'
-
+import { formatTime } from '@/utils/formats'
 const reservationStore = useReservationStore()
 const selectedDate = ref(new Date().toISOString().substr(0, 10))
 const statuses = ['pending', 'confirmed', 'arrived', 'cancelled', 'completed']

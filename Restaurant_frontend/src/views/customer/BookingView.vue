@@ -5,7 +5,7 @@ import { useRouter } from 'vue-router'
 
 const reservationStore = useReservationStore()
 const router = useRouter()
-
+const allowedMinutes = v => v == 0 || v == 30
 const step = ref(1)
 const form = reactive({
   date: new Date().toISOString().substr(0, 10),
@@ -13,15 +13,13 @@ const form = reactive({
   guestCount: 2,
   tableId: null
 })
-const timeSlots = ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00']
-
 const searchTables = async () => {
-  const success = await reservationStore.getAvailableTables({
+  const response = await reservationStore.getAvailableTables({
     date: form.date,
     timeSlot: form.timeSlot,
     guests: form.guestCount
   })
-  if (success) step.value = 2
+  if (response.success) step.value = 2
 }
 
 const confirmBooking = async () => {
@@ -49,8 +47,31 @@ const confirmBooking = async () => {
             <v-col cols="12" md="4">
               <v-text-field v-model="form.date" label="Date" type="date" variant="outlined" />
             </v-col>
-            <v-col cols="12" md="4">
-              <v-select v-model="form.timeSlot" :items="timeSlots" label="Time" variant="outlined" />
+            <v-col cols="11" sm="5">
+              <v-text-field
+                v-model="form.timeSlot"
+                label="Select Time"
+                prepend-icon="mdi-clock-time-four-outline"
+                readonly
+              >
+                <v-menu
+                  v-model="menuVisible"
+                  activator="parent"
+                  :close-on-content-click="false"
+                  transition="scale-transition"
+                >
+                  <v-time-picker
+                    v-if="menuVisible"
+                    v-model="form.timeSlot"
+                    format="24hr"
+                    scrollable
+                    min="09:00"
+                    max="21:00"
+                    :allowed-minutes="allowedMinutes"
+                    @update:model-value="menuVisible = false"
+                  ></v-time-picker>
+                </v-menu>
+              </v-text-field>
             </v-col>
             <v-col cols="12" md="4">
               <v-text-field v-model="form.guestCount" label="Guests" type="number" variant="outlined" />

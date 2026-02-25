@@ -1,8 +1,5 @@
 import vine from '@vinejs/vine'
 
-/**
- * Validator for creating a new table
- */
 export const createTableValidator = vine.compile(
   vine.object({
     tableNumber: vine.string().trim()
@@ -11,6 +8,16 @@ export const createTableValidator = vine.compile(
   })
 )
 
+export const availabilityValidator = vine.compile(
+  vine.object({
+    params: vine.object({
+      id:vine.number().exists(async (db,value) => {
+        const match = await db.from('tables').where('id',value).first()
+        return !!match
+      })
+    })
+  })
+)
 export const updateTableValidator = vine.compile(
   vine.object({
     params: vine.object({

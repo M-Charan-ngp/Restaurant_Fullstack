@@ -40,7 +40,7 @@ export const useMenuStore = defineStore('menu', () => {
         loading.value = true
         try {
             const response = await PublicService.getMenu(page)
-            const { data, meta } = response.data
+            const { data, meta } = response.data.items
             
             items.value = data
             pagination.value = meta
@@ -60,14 +60,12 @@ const fetchMenuforStaff = async (page = 1,limit=10) => {
         
         const response = await StaffService.ViewMenu(pageToFetch,limitToFetch)
         if (response && response.data) {
-            const { data, meta } = response.data
-            console.log("Meta inside store",meta)
+            const { data, meta } = response.data.items
             items.value = data
             pagination.value.total = meta.total
             pagination.value.limit = meta.perPage
             pagination.value.currentPage = meta.currentPage
             pagination.value.lastPage = meta.lastPage
-            console.log("Total inside store",pagination.value.total)
         }
         
         return { success: true }
@@ -84,7 +82,7 @@ const fetchMenuforStaff = async (page = 1,limit=10) => {
         loading.value = true
         try {
             await AdminService.createMenuItem(payload)
-            await fetchMenu() 
+            await fetchMenuforStaff(pagination.value.currentPage, pagination.value.limit) 
             return { success: true }
         } catch (err) {
             return { success: false, error: err.response?.data?.message || "Failed to add item" }
@@ -95,7 +93,7 @@ const fetchMenuforStaff = async (page = 1,limit=10) => {
 
     const toggleAvailability = async (id) => {
         try {
-            const response = await StaffService.toggleMenuAvailability(id)
+            const response = await AdminService.toggleMenuAvailability(id)
             const index = items.value.findIndex(item => item.id === id)
             if (index !== -1) {
                 const newValue = response.data.isAvailable ?? !items.value[index].isAvailable

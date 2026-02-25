@@ -34,7 +34,7 @@ export const StaffService = {
   },
   updateOrderStatus: (id, status) => 
     api.patch(`/staff/orders/${id}/status`, { status }),
-  toggleMenuAvailability: (id) => api.patch(`/staff/menu/${id}/toggle`),
+  
 }
 
 export const AdminService = {
@@ -43,4 +43,6 @@ export const AdminService = {
   getTables: (page = 1) => api.get(`/admin/tables?page=${page}`),
   createTable: (payload) => api.post('/admin/tables', payload),
   updateTable: (id, payload) => api.patch(`/admin/tables/${id}`, payload),
+  toggleMenuAvailability: (id) => api.patch(`/admin/menu/${id}/toggle`),
+  toggleTableAvailability: (id) => api.patch(`/admin/table/${id}/toggle`),
 }

@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted } from 'vue'
 import { useReservationStore } from '@/stores/reservation'
-
+import { formatTime,formatDate } from '@/utils/formats'
 const resStore = useReservationStore()
 
 onMounted(() => {
@@ -26,9 +26,9 @@ const getStatusColor = (status) => {
       <v-expansion-panel v-for="res in resStore.myReservations" :key="res.id">
         <v-expansion-panel-title>
           <div class="d-flex align-center w-100">
-            <span class="font-weight-bold">{{ res.reservationDate }}</span>
+            <span class="font-weight-bold">{{ formatDate(res.reservationDate) }}</span>
             <v-divider vertical class="mx-4" />
-            <span>{{ res.timeSlot }}</span>
+            <span>{{ formatTime(res.timeSlot) }}</span>
             <v-spacer />
             <v-chip :color="getStatusColor(res.status)" size="small" class="text-uppercase">
               {{ res.status }}
@@ -42,7 +42,7 @@ const getStatusColor = (status) => {
               Table Number: <strong>{{ res.table?.tableNumber }}</strong>
             </v-list-item>
             <v-list-item prepend-icon="mdi-account-group">
-              Party Size: <strong>{{ res.guestCount }} People</strong>
+              Size: <strong>{{ res.guestCount }} People</strong>
             </v-list-item>
           </v-list>
         </v-expansion-panel-text>

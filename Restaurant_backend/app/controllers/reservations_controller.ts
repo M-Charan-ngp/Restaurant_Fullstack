@@ -27,6 +27,7 @@ async checkAvailability({ request }: HttpContext) {
   const bookedTableIds = busyTables.map((r) => r.table_id)
   const availableTables = await Table.query()
     .whereNotIn('id', bookedTableIds)
+    .where('is_available',true)
     .where('capacity', '>=', guests)
   return {
     status:true,

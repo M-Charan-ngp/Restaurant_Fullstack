@@ -54,17 +54,15 @@ api.interceptors.response.use(
                     break;
 
                 case 422:
-                    alert("Backend: Validation Failed (422).");
+                    alert("Backend: Validation Failed (422).",response.data.errors);
                     console.error("Validation failed:", response.data.errors);
                     break;
 
                 case 500:
                     alert("Backend: Internal Server Error (500)).");
-                    alert("Backend: Internal Server Error (500).");
                     break;
             }
         } else {
-            alert("Network error.");
         }
         return Promise.reject(error);
     },

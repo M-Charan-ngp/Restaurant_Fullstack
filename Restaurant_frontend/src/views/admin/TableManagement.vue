@@ -48,18 +48,57 @@ const handleSave = async () => {
       </v-col>
     </v-row>
 
-    <v-row v-else>
-      <v-col v-for="table in tableStore.tables" :key="table.id" cols="12" sm="3">
-        <v-card border elevation="0" rounded="lg" class="text-center pa-4">
-          <v-icon size="48" color="primary" class="mb-2">mdi-table-chair</v-icon>
-          <div class="text-h6">Table {{ table.tableNumber }}</div>
-          <div class="text-body-2 text-grey">Seats: {{ table.capacity }}</div>
-          <v-card-actions class="justify-center mt-2">
-            <v-btn variant="text" size="small" color="info" @click="openEdit(table)">Edit</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-col>
-    </v-row>
+   <v-row v-else>
+  <v-col
+    v-for="table in tableStore.tables"
+    :key="table.id"
+    cols="12"
+    sm="6"
+    md="4"
+    lg="3"
+  >
+    <v-card elevation="2" rounded="lg" class="pa-4">
+      <div class="d-flex justify-space-between align-center mb-3">
+        <div class="text-h6">
+          {{ table.tableNumber }}
+        </div>
+        <v-chip
+          size="small"
+          :color="table.isAvailable ? 'success' : 'error'"
+          variant="tonal"
+        >
+          {{ table.isAvailable ? 'Available' : 'Unavailable' }}
+        </v-chip>
+      </div>
+      <div class="text-center my-3">
+        <v-icon size="40" color="primary">
+          mdi-table-chair
+        </v-icon>
+      </div>
+      <div class="text-body-2 text-center text-grey-darken-1 mb-4">
+        Seats: {{ table.capacity }}
+      </div>
+      <v-card-actions class="justify-space-between pa-0">
+        <v-btn
+          variant="text"
+          size="small"
+          color="info"
+          @click="openEdit(table)"
+        >
+          Edit
+        </v-btn>
+        <v-btn
+          variant="tonal"
+          size="small"
+          :color="table.isAvailable ? 'warning' : 'success'"
+          @click="tableStore.toggleTableStatus(table.id)"
+        >
+          Toggle
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-col>
+</v-row>
 
     <v-dialog v-model="showDialog" max-width="400">
       <v-card :title="editMode ? 'Update Table' : 'Create New Table'">

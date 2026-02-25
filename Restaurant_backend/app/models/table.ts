@@ -13,6 +13,9 @@ export default class Table extends BaseModel {
   @column()
   declare capacity: number
 
+  @column()
+  declare isAvailable: boolean
+
   @column.dateTime({ autoCreate: true, serializeAs: null })
   declare createdAt: DateTime
 

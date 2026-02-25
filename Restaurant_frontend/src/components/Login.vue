@@ -11,10 +11,10 @@ const loading = ref(false)
 const credentials = defineModel({ required: true })
 
 const emailrule = [
-    value => !!value || 'Email is compulsory.',
+    value => !!value || 'Email is required.',
     value => /^\S+@\S+\.\S+$/.test(value) || 'Invalid email'
 ]
-const passwordrule = [value => !!value || "Password is compulsory"]
+const passwordrule = [value => !!value || "Password is required"]
 
 const handlesubmit = async () => {
     if (credentials.value.email && credentials.value.password) {

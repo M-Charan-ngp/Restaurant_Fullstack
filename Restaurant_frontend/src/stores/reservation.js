@@ -17,7 +17,7 @@ export const useReservationStore = defineStore('reservation', () => {
         loading.value = true
         try {
             const response = await CustomerService.checkAvailability(params)
-            availableTables.value = response.data
+            availableTables.value = response.data.availableTables
             return { success: true }
         } catch (err) {
             return { success: false, error: "Failed to fetch availability" }
@@ -42,8 +42,8 @@ export const useReservationStore = defineStore('reservation', () => {
         loading.value = true
         try {
             const response = await CustomerService.getMyReservations(page)
-            myReservations.value = response.data.data
-            pagination.value = response.data.meta
+            myReservations.value = response.data.reservations.data
+            pagination.value = response.data.reservations.meta
         } finally {
             loading.value = false
         }
@@ -55,8 +55,8 @@ export const useReservationStore = defineStore('reservation', () => {
             const pageToFetch = typeof page === 'number' ? page : 1
             const limitToFetch = typeof limit === 'number' ? limit: 10
             const response = await StaffService.getReservations(date, pageToFetch,limitToFetch)
-            staffReservations.value = response.data.data
-            pagination.value = response.data.meta
+            staffReservations.value = response.data.reservations.data
+            pagination.value = response.data.reservations.meta
         } finally {
             loading.value = false
         }
