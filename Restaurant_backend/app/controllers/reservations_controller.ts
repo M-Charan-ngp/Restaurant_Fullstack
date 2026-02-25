@@ -8,7 +8,7 @@ import db from '@adonisjs/lucid/services/db'
 
 export default class ReservationsController {
 
-async checkAvailability({ request, response }: HttpContext) {
+async checkAvailability({ request }: HttpContext) {
   const { date, guests, timeSlot } = await request.validateUsing(availabilityValidator)
   const requestedStart = timeSlot
   const requestedEnd = DateTime.fromFormat(timeSlot, 'HH:mm').plus({ hours: 2 }).toFormat('HH:mm')
@@ -28,7 +28,10 @@ async checkAvailability({ request, response }: HttpContext) {
   const availableTables = await Table.query()
     .whereNotIn('id', bookedTableIds)
     .where('capacity', '>=', guests)
-  return response.ok(availableTables)
+  return {
+    status:true,
+    availableTables
+  }
 }
 
 async store({ user, request, response }: HttpContext) {
@@ -60,10 +63,13 @@ async store({ user, request, response }: HttpContext) {
     status: 'pending'
   })
 
-  return response.created(reservation)
+  return {
+    status:true,
+    reservation
+  }
 }
 
-async index({ request, response }: HttpContext) {
+async index({ request }: HttpContext) {
     const payload = await request.validateUsing(reservationQueryValidator)
     
     const page = payload.page || 1
@@ -78,18 +84,17 @@ async index({ request, response }: HttpContext) {
         .orderBy('time_slot', 'asc')
         .paginate(page, limit)
     
-    return response.ok(reservations)
+    return {
+      status:true,
+      reservations
+    }
 }
 
-async myReservations({ user, request, response }: HttpContext) {
+async myReservations({ user, request }: HttpContext) {
   const { page = 1, limit = 10 } = await request.validateUsing(paginationValidator)
 
-  if (!user) {
-    return response.unauthorized({ message: 'User not found' })
-  }
-
   const reservations = await Reservation.query()
-    .where('user_id', user.id)
+    .where('user_id', user!.id)
     .orderBy('time_slot', 'desc')
     .preload('table') 
     .preload('order', (q) => {
@@ -97,14 +102,21 @@ async myReservations({ user, request, response }: HttpContext) {
     })
     .paginate(page, limit)
 
-  return response.ok(reservations)
+  return {
+    status:true,
+    reservations
+  }
 }
 
-    async updateStatus({ params, request, response }: HttpContext) {
+    async updateStatus({ params, request }: HttpContext) {
         const reservation = await Reservation.findOrFail(params.id)
         const { status } = await request.validateUsing(updateReservationStatusValidator)
         reservation.status = status
         await reservation.save()
-        return response.ok({ message: 'Status updated', reservation })
+        return { 
+          status:true,
+          message: 'Status updated', 
+          reservation 
+        }
     }
 }

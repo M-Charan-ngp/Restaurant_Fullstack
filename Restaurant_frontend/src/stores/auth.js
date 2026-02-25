@@ -7,7 +7,7 @@ import { AuthService } from '@/services/api_services'
 export const useAuthStore = defineStore('auth', () => {
     const token = ref(Cookies.get('auth_token') || null)
     const user = ref(null)
-    const themeColor = ref(localStorage.getItem('app_theme') || '#1976D2') // Default Vuetify Blue
+    const themeColor = ref(localStorage.getItem('app_theme') || '#1976D2')
     const isAuthenticated = computed(() => !!token.value && !!user.value)
     
     const isCustomer = computed(() => Number(user.value?.role) === 1)

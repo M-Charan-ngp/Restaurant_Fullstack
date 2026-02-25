@@ -6,7 +6,7 @@ import { signupValidator, loginValidator } from '#validators/auth_validator'
 
 export default class AuthController {
 
-  async signup({ request, response }: HttpContext) {
+  async signup({ request }: HttpContext) {
     const payload = await request.validateUsing(signupValidator)
     const hashedPassword = await hash.make(payload.password)
     const user = await User.create({
@@ -17,14 +17,15 @@ export default class AuthController {
       roleId: payload.roleId || 1
     })
 
-    return response.created({
+    return {
+      status: true,
       message: 'Account created successfully',
       user: { 
         name: user.fullName, 
         email: user.email, 
         role: user.roleId 
       }
-    })
+    }
   }
 
   async login({ request, response }: HttpContext) {
@@ -48,6 +49,7 @@ export default class AuthController {
     })
 
     return {
+      status:true,
       message: 'Login successful',
       token: token,
     }

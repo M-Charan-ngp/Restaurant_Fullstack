@@ -5,35 +5,41 @@ import { paginationValidator } from '#validators/common_validator'
 
 export default class MenuController {
 
-  async index({request, response }: HttpContext) {
+  async index({request }: HttpContext) {
     const { page = 1, limit = 12 } = await request.validateUsing(paginationValidator)
     const items = await MenuItem.query()
       .where('is_available', true)
       .orderBy('category', 'asc')
       .paginate(page, limit)
 
-    return response.ok(items)
+    return {
+      status: true,
+      items
+    }
   }
 
-  async adminIndex({request, response }: HttpContext) {
+  async adminIndex({request}: HttpContext) {
     const { page = 1, limit = 20 } = await request.validateUsing(paginationValidator)
     console.log(page,limit);
     const items = await MenuItem.query().orderBy('category', 'asc').paginate(page,limit)
-    console.log(items)
-    return response.ok(items)
+    return {
+      status:true,
+      items
+    }
   }
 
-  async store({ request, response }: HttpContext) {
+  async store({ request }: HttpContext) {
     const payload = await request.validateUsing(createMenuValidator)
     const item = await MenuItem.create(payload)
 
-    return response.created({
+    return {
+      status:true,
       message: 'Menu item created successfully',
-      item,
-    })
+      item
+    }
   }
 
-  async update({ params, request, response }: HttpContext) {
+  async update({ params, request }: HttpContext) {
     const item = await MenuItem.findOrFail(params.id)
     const payload = await request.validateUsing(updateMenuValidator, {
       meta: { itemId: item.id }
@@ -42,20 +48,22 @@ export default class MenuController {
     item.merge(payload)
     await item.save()
 
-    return response.ok({
+    return {
+      status:true,
       message: 'Menu item updated successfully',
-      item,
-    })
+      item
+    }
   }
  
-  async toggleAvailability({ params, response }: HttpContext) {
+  async toggleAvailability({ params}: HttpContext) {
     const item = await MenuItem.findOrFail(params.id)
     item.isAvailable = !item.isAvailable
     await item.save()
 
-    return response.ok({
+    return {
+      status:true,
       message: `Item is now ${item.isAvailable ? 'available' : 'unavailable'}`,
-      item,
-    })
+      item
+    }
   }
 }

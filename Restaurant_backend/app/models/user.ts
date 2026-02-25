@@ -4,6 +4,7 @@ import type { HasMany } from '@adonisjs/lucid/types/relations'
 import Reservation from './reservation.js'
 
 export default class User extends BaseModel {
+  
   @column({ isPrimary: true })
   declare id: number
 
@@ -30,12 +31,4 @@ export default class User extends BaseModel {
 
   @hasMany(() => Reservation)
   declare reservations: HasMany<typeof Reservation>
-
-  public get isAdmin() {
-    return this.roleId === 3
-  }
-
-  public get isStaff() {
-    return this.roleId === 2 || this.roleId === 3
-  }
 }

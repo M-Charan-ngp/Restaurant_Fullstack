@@ -27,8 +27,6 @@ export default class Order extends BaseModel {
   @column.dateTime({ autoCreate: true, autoUpdate: true, serializeAs: null })
   declare updatedAt: DateTime
 
-  // --- Relationships ---
-
   @belongsTo(() => Reservation)
   declare reservation: BelongsTo<typeof Reservation>
 

@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column, scope, hasMany} from '@adonisjs/lucid/orm'
+import { BaseModel, column, hasMany} from '@adonisjs/lucid/orm'
 import type { HasMany } from '@adonisjs/lucid/types/relations'
 import OrderItem from './order_item.js'
 
@@ -30,8 +30,4 @@ export default class MenuItem extends BaseModel {
 
   @hasMany(() => OrderItem)
   declare orderItems: HasMany<typeof OrderItem>
-
-  public static visible = scope((query) => {
-    query.where('is_available', true)
-  })
 }
