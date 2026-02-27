@@ -25,7 +25,7 @@ const handlesubmit = async () => {
         if (result.success) {
             emit('login-success') 
         } else {
-            alert(result.error)
+            console.error(result.error)
         }
     }
 }

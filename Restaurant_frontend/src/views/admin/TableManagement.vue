@@ -1,7 +1,9 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { useTableStore } from '@/stores/table'
-
+import {useToast} from 'vue-toast-notification';
+import 'vue-toast-notification/dist/theme-sugar.css';
+const $toast = useToast();
 const tableStore = useTableStore()
 const showDialog = ref(false)
 const editMode = ref(false)
@@ -30,7 +32,7 @@ const handleSave = async () => {
   }
   
   if (!result?.error) showDialog.value = false
-  else alert(result.error)
+  else $toast.error(result.error,{position:"top-right"})
 }
 </script>
 

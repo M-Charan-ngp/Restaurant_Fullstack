@@ -3,6 +3,9 @@ import { onMounted, ref } from 'vue'
 import { useOrderStore } from '@/stores/order'
 import { useReservationStore } from '@/stores/reservation'
 import { useRouter } from 'vue-router'
+import {useToast} from 'vue-toast-notification';
+import 'vue-toast-notification/dist/theme-sugar.css';
+const $toast = useToast();
 
 const orderStore = useOrderStore()
 const resStore = useReservationStore()
@@ -16,15 +19,16 @@ onMounted(() => {
 
 const handlePlaceOrder = async () => {
   if (!selectedResId.value) {
-    alert("Please select your active booking/table.")
+    $toast.warning("Please select your active booking/table.",{position:"top-right"})
     return
   }
   const resId = Number(selectedResId.value)
   const result = await orderStore.submitOrder(resId)
   if (result.success) {
+    $toast.success("Order placed successfully!",{position:'top-right'})
     router.push('/my-orders')
   } else {
-    alert(result.error)
+    $toast.warning(result.error,{position:"top-right"})
   }
 }
 </script>

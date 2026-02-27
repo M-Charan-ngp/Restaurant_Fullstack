@@ -5,7 +5,8 @@ import Login from '@/components/Login.vue'
 import Register from '@/components/Register.vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-
+import { useToast } from 'vue-toast-notification'
+const $toast = useToast();
 const router = useRouter()
 const authStore = useAuthStore()
 const isLogin = ref(true)
@@ -25,7 +26,7 @@ const registerData = reactive({
 
 const handleRedirect = () => {
     const role = authStore.user?.role
-    
+    $toast.success("Login Success!",{position:'top-right'})
     if (role === 3) router.push('/admin/tables')
     else if (role === 2) router.push('/staff/reservations')
     else router.push('/menu')

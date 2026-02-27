@@ -2,6 +2,9 @@
 import axios from 'axios'
 import Cookies from 'js-cookie'
 import { useAuthStore } from '@/stores/auth'
+import {useToast} from 'vue-toast-notification';
+import 'vue-toast-notification/dist/theme-sugar.css';
+const $toast = useToast();
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
   headers: {
@@ -16,7 +19,7 @@ api.interceptors.request.use((config) => {
   if (token) {
     if (authStore.user?.exp && authStore.user.exp < currentTime) {
       authStore.logout()
-      alert("Session expired. Redirecting...")
+      $toast.error("Session expired. Redirecting...",{position:"top-right"})
       window.location.href = '/login'
       return Promise.reject('Token Expired')
     }
@@ -45,21 +48,21 @@ api.interceptors.response.use(
                     }
                     break;
                 case 403:
-                    alert("Backend Access Denied: You do not have permission for this.");
+                    $toast.error("Backend Access Denied: You do not have permission for this.",{position:"top-right"});
                     break;
 
                 case 404:
-                    alert("Backend: The accessed resource not found")
+                    $toast.error("Backend: The accessed resource not found",{position:"top-right"})
                     console.error("Backend: Resource not found (404).");
                     break;
 
                 case 422:
-                    alert("Backend: Validation Failed (422).",response.data.errors);
+                    $toast.error(`Backend: Validation Failed (422).${response.data.errors}`,{position:"top-right"});
                     console.error("Validation failed:", response.data.errors);
                     break;
 
                 case 500:
-                    alert("Backend: Internal Server Error (500)).");
+                    $toast.error("Backend: Internal Server Error (500)).",{position:"top-right"});
                     break;
             }
         } else {

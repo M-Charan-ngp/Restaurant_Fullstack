@@ -1,7 +1,8 @@
 <script setup>
 import { ref } from 'vue'
 import { useMenuStore } from '@/stores/menu'
-
+import {useToast} from 'vue-toast-notification';
+const $toast = useToast();
 const menuStore = useMenuStore()
 const showDialog = ref(false)
 const editMode = ref(false)
@@ -37,7 +38,7 @@ const handleSave = async () => {
   }
   
   if (result.success) showDialog.value = false
-  else alert(result.error)
+  else $toast.error(result.error,{position:"top-right"})
 }
 </script>
 

@@ -1,9 +1,6 @@
 <script setup>
 defineProps(['item'])
 defineEmits(['add'])
-const logout = () => {
-  router.push('/');
-};
 </script>
 
 <template>

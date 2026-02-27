@@ -1,12 +1,14 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useAuthStore } from '../stores/auth'
+import {useToast} from 'vue-toast-notification';
+import 'vue-toast-notification/dist/theme-sugar.css';
 
 const newUser = defineModel({ required: true })
 const authStore = useAuthStore()
 const themeColor = computed(() => authStore.themeColor)
 const loading = ref(false)
-
+const $toast = useToast();
 const confirmPassword = ref('')
 const togglepass = ref(false) 
 const toggleconfirmpass = ref(false)
@@ -28,11 +30,11 @@ const phonerule = [
   value => /^[0-9]{10}$/.test(value) || 'Invalid phone']
 const handleSubmit = async () => {
   if (!newUser.value.fullName || !newUser.value.email || !newUser.value.password || !newUser.value.phoneNumber) {
-        alert("Please fill all the values")
+        $toast.error("Please fill all the values",{position:"top-right"})
         return
     }
     if (newUser.value.password !== confirmPassword.value) {
-        alert("Passwords do not match!")
+        $toast.error("Passwords do not match!",{position:"top-right"})
         return
     }
 
@@ -41,10 +43,8 @@ const handleSubmit = async () => {
     loading.value = false
 
     if (result.success) {
-        alert("Registration successful! Please login.")
+        $toast.success("Registration successful! Please login.",{position:"top-right"})
         emit('success')
-    } else {
-        alert(result.error)
     }
 }
 </script>

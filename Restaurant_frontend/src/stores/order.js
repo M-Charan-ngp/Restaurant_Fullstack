@@ -77,7 +77,7 @@ export const useOrderStore = defineStore('order', () => {
         loading.value = true
         try {
             const response = await CustomerService.getMyOrders(page)
-            myOrders.value = response.data.data
+            myOrders.value = response.data.orders.data
             pagination.value = response.data.meta
         } finally {
             loading.value = false

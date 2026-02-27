@@ -2,7 +2,9 @@
 import { ref, reactive } from 'vue'
 import { useReservationStore } from '@/stores/reservation'
 import { useRouter } from 'vue-router'
-
+import {useToast} from 'vue-toast-notification';
+import 'vue-toast-notification/dist/theme-sugar.css';
+const $toast = useToast();
 const reservationStore = useReservationStore()
 const router = useRouter()
 const allowedMinutes = v => v == 0 || v == 30
@@ -30,10 +32,10 @@ const confirmBooking = async () => {
     guestCount: form.guestCount
   })
   if (res.success) {
-    alert('Table Reserved Successfully!')
+    $toast.success('Table Reserved Successfully!',{position:"top-right"})
     router.push('/my-reservations')
   } else {
-    alert(res.error)
+    $toast.error(res.error,{position:"top-right"})
   }
 }
 </script>

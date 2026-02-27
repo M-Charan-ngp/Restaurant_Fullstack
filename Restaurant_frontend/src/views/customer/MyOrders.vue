@@ -49,14 +49,9 @@ const getStatusColor = (status) => {
         </v-col>
 
         <v-col cols="6" sm="2" class="d-flex justify-sm-center mt-2 mt-sm-0">
-          <v-chip 
-            :color="getStatusColor(order.status)" 
-            size="x-small" 
-            variant="flat" 
-            class="text-uppercase font-weight-bold"
-          >
-            {{ order.status }}
-          </v-chip>
+          <v-chip :color="getStatusColor(order.status)" size="small" class="text-uppercase">
+              {{ order.status }}
+            </v-chip>
         </v-col>
 
         <v-col cols="6" sm="3" class="text-right mt-2 mt-sm-0">

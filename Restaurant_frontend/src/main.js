@@ -8,6 +8,7 @@ import { createVuetify } from 'vuetify'
 import { useAuthStore } from './stores/auth'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
+import ToastPlugin from 'vue-toast-notification';
 import 'unfonts.css'
 
 import App from './App.vue'
@@ -21,7 +22,7 @@ const vuetify = createVuetify({
 const app = createApp(App)
 
 
-
+app.use(ToastPlugin,{position:'top'});
 app.use(createPinia())
 const authStore = useAuthStore()
 authStore.init()
