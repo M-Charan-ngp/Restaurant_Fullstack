@@ -1,4 +1,5 @@
 import vine from '@vinejs/vine'
+import { Infer } from '@vinejs/vine/types'
 
 export const paginationValidator = vine.compile(
   vine.object({
@@ -6,3 +7,5 @@ export const paginationValidator = vine.compile(
     limit: vine.number().positive().max(100).parse((value) => value ?? 10),
   })
 )
+
+export type paginationDataDto = Infer<typeof paginationValidator>

@@ -1,5 +1,5 @@
 import vine from '@vinejs/vine'
-import { FieldContext } from '@vinejs/vine/types'
+import { FieldContext, Infer } from '@vinejs/vine/types'
 
 const isFutureDateTime = vine.createRule(async (value: unknown, _, field: FieldContext) => {
   const data = field.data as { date: string }
@@ -36,13 +36,24 @@ export const availabilityValidator = vine.compile(
 
 export const updateReservationStatusValidator = vine.compile(
   vine.object({
+    params: vine.object({
+      id:vine.number().exists(async (db,value) => {
+        const match = await db.from('reservations').where('id',value).first()
+        return !!match
+      })
+    }),
     status: vine.enum(['pending', 'confirmed', 'arrived', 'cancelled', 'completed'])
   })
 )
 export const reservationQueryValidator = vine.compile(
   vine.object({
-    page: vine.number().optional(),
-    limit: vine.number().optional(),
-    date: vine.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(), // YYYY-MM-DD
+    page: vine.number().positive().parse((value) => value ?? 1),
+    limit: vine.number().positive().max(100).parse((value) => value ?? 10),
+    date: vine.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
   })
 )
+
+export type reservationDataDto = Infer<typeof createReservationValidator>
+export type updateReservationStatusDto = Infer<typeof updateReservationStatusValidator>
+export type reservationQueryDataDto = Infer<typeof reservationQueryValidator>
+export type availabilityDataDto = Infer<typeof availabilityValidator>

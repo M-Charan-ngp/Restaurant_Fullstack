@@ -1,17 +1,14 @@
-import MenuItem from '#models/menu_item'
 import { HttpContext } from '@adonisjs/core/http'
-import { createMenuValidator, updateMenuValidator } from '#validators/menu_validator'
+import { createMenuValidator, updateMenuValidator, availabilityToggleValidator } from '#validators/menu_validator'
 import { paginationValidator } from '#validators/common_validator'
+import menuRepository from '../repositories/menu_repository.js'
 
 export default class MenuController {
+  protected repository = new menuRepository()
 
   async index({request }: HttpContext) {
-    const { page = 1, limit = 12 } = await request.validateUsing(paginationValidator)
-    const items = await MenuItem.query()
-      .where('is_available', true)
-      .orderBy('category', 'asc')
-      .paginate(page, limit)
-
+    const params = await request.validateUsing(paginationValidator)
+    const items = await this.repository.listMenu(params)
     return {
       status: true,
       items
@@ -19,9 +16,8 @@ export default class MenuController {
   }
 
   async adminIndex({request}: HttpContext) {
-    const { page = 1, limit = 20 } = await request.validateUsing(paginationValidator)
-    console.log(page,limit);
-    const items = await MenuItem.query().orderBy('category', 'asc').paginate(page,limit)
+    const params = await request.validateUsing(paginationValidator)
+    const items = await this.repository.adminListMenu(params)
     return {
       status:true,
       items
@@ -30,8 +26,7 @@ export default class MenuController {
 
   async store({ request }: HttpContext) {
     const payload = await request.validateUsing(createMenuValidator)
-    const item = await MenuItem.create(payload)
-
+    const item = await this.repository.createMenu(payload)
     return {
       status:true,
       message: 'Menu item created successfully',
@@ -40,14 +35,11 @@ export default class MenuController {
   }
 
   async update({ params, request }: HttpContext) {
-    const item = await MenuItem.findOrFail(params.id)
+    
     const payload = await request.validateUsing(updateMenuValidator, {
-      meta: { itemId: item.id }
+      meta: { itemId: params.id }
     })
-
-    item.merge(payload)
-    await item.save()
-
+    const item = this.repository.updateMenu(payload)
     return {
       status:true,
       message: 'Menu item updated successfully',
@@ -55,11 +47,9 @@ export default class MenuController {
     }
   }
  
-  async toggleAvailability({ params}: HttpContext) {
-    const item = await MenuItem.findOrFail(params.id)
-    item.isAvailable = !item.isAvailable
-    await item.save()
-
+  async toggleAvailability({ request }: HttpContext) {
+    const { params } = await request.validateUsing(availabilityToggleValidator)
+    const item = await this.repository.updateAvailability(params.id)
     return {
       status:true,
       message: `Item is now ${item.isAvailable ? 'available' : 'unavailable'}`,

@@ -1,4 +1,5 @@
 import vine from '@vinejs/vine'
+import { Infer } from '@vinejs/vine/types'
 
 export const createMenuValidator = vine.compile(
   vine.object({
@@ -9,8 +10,24 @@ export const createMenuValidator = vine.compile(
     isAvailable: vine.boolean().optional()
   })
 )
+export const availabilityToggleValidator = vine.compile(
+  vine.object({
+    params: vine.object({
+      id:vine.number().exists(async(db,value)=>{
+        const match = await db.from('menu_items').where('id',value).first()
+        return !!match
+      })
+    })
+  })
+)
 export const updateMenuValidator = vine.compile(
   vine.object({
+    params: vine.object({
+      id:vine.number().exists(async (db,value) => {
+        const match = await db.from('menu_items').where('id',value).first()
+        return !!match
+      })
+    }),
     name: vine.string().trim().unique(async (db, value, field) => {
       const item = await db
         .from('menu_items')
@@ -25,3 +42,6 @@ export const updateMenuValidator = vine.compile(
     isAvailable: vine.boolean().optional()
   })
 )
+
+export type MenuDataDto = Infer<typeof createMenuValidator>
+export type UpdateMenuDataDto = Infer<typeof updateMenuValidator>

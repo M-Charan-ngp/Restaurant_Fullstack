@@ -1,4 +1,5 @@
 import vine from '@vinejs/vine'
+import { Infer } from '@vinejs/vine/types'
 
 export const createTableValidator = vine.compile(
   vine.object({
@@ -41,3 +42,6 @@ export const updateTableValidator = vine.compile(
     capacity: vine.number().min(1).max(20).optional(),
   })
 )
+export type tableDataDto = Infer<typeof createTableValidator>
+export type availableTableDataDto = Infer<typeof availabilityValidator>
+export type UpdateTableDataDto = Infer<typeof updateTableValidator>

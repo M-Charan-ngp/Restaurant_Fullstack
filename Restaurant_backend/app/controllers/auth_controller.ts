@@ -1,22 +1,14 @@
-import User from '#models/user'
-import hash from '@adonisjs/core/services/hash'
-import { JwtService } from '#services/jwt_service'
+
 import { HttpContext } from '@adonisjs/core/http'
 import { signupValidator, loginValidator } from '#validators/auth_validator'
+import AuthRepository from '../repositories/auth_repository.js'
 
 export default class AuthController {
+  protected repository = new AuthRepository()
 
   async signup({ request }: HttpContext) {
     const payload = await request.validateUsing(signupValidator)
-    const hashedPassword = await hash.make(payload.password)
-    const user = await User.create({
-      fullName: payload.fullName,
-      email: payload.email,
-      password: hashedPassword,
-      phoneNumber: payload.phoneNumber,
-      roleId: payload.roleId || 1
-    })
-
+    const user = await this.repository.createUser(payload)
     return {
       status: true,
       message: 'Account created successfully',
@@ -28,26 +20,9 @@ export default class AuthController {
     }
   }
 
-  async login({ request, response }: HttpContext) {
-    const { email, password } = await request.validateUsing(loginValidator)
-
-    const user = await User.findBy('email', email)
-    if (!user) {
-      return response.unauthorized({ message: 'Invalid credentials' })
-    }
-
-    const isPasswordValid = await hash.verify(user.password, password)
-
-    if (!isPasswordValid) {
-      return response.unauthorized({ message: 'Invalid credentials' })
-    }
-    
-    const token = JwtService.sign({ 
-      id: user.id, 
-      name: user.fullName, 
-      role: user.roleId
-    })
-
+  async login({ request }: HttpContext) {
+    const Credentials = await request.validateUsing(loginValidator)
+    const token = await this.repository.loginUser(Credentials)
     return {
       status:true,
       message: 'Login successful',

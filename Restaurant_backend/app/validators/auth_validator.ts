@@ -1,4 +1,5 @@
 import vine from '@vinejs/vine'
+import { Infer } from '@vinejs/vine/types'
 
 export const signupValidator = vine.compile(
   vine.object({
@@ -16,3 +17,6 @@ export const loginValidator = vine.compile(
     password: vine.string(),
   })
 )
+
+export type UserDataDto = Infer<typeof signupValidator>
+export type LoginDataDto = Infer<typeof loginValidator>

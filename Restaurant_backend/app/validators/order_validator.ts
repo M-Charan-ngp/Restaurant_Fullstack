@@ -1,4 +1,5 @@
 import vine from '@vinejs/vine'
+import { Infer } from '@vinejs/vine/types'
 
 export const createOrderValidator = vine.compile(
   vine.object({
@@ -14,7 +15,24 @@ export const createOrderValidator = vine.compile(
 
 export const updateOrderStatusValidator = vine.compile(
   vine.object({
-    
+    params: vine.object({
+      id:vine.number().exists(async (db,value) => {
+        const match = await db.from('orders').where('id',value).first()
+        return !!match
+      })
+    }),
     status: vine.enum(['pending', 'cooking', 'served','cancelled'])
   })
 )
+export const cancelOrderValidator = vine.compile(
+  vine.object({
+    params: vine.object({
+      id:vine.number().exists(async (db,value) => {
+        const match = await db.from('orders').where('id',value).first()
+        return !!match
+      })
+    }),
+  })
+)
+export type orderDataDto = Infer<typeof createOrderValidator>
+export type orderStatusDataDto = Infer<typeof updateOrderStatusValidator>

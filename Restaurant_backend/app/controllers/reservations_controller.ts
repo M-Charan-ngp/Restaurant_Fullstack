@@ -1,123 +1,60 @@
-import Reservation from '#models/reservation'
-import { DateTime } from 'luxon'
-import Table from '#models/table'
 import { HttpContext } from '@adonisjs/core/http'
-import { createReservationValidator, updateReservationStatusValidator, availabilityValidator, reservationQueryValidator } from '#validators/reservation_validator'
+import { 
+  createReservationValidator, 
+  updateReservationStatusValidator, 
+  availabilityValidator, 
+  reservationQueryValidator } from '#validators/reservation_validator'
 import { paginationValidator } from '#validators/common_validator'
-import db from '@adonisjs/lucid/services/db'
+import reservationRepository from '../repositories/reservation_repository.js'
 
 export default class ReservationsController {
 
-async checkAvailability({ request }: HttpContext) {
-  const { date, guests, timeSlot } = await request.validateUsing(availabilityValidator)
-  const requestedStart = timeSlot
-  const requestedEnd = DateTime.fromFormat(timeSlot, 'HH:mm').plus({ hours: 2 }).toFormat('HH:mm')
+  protected repository = new reservationRepository()
 
-  const busyTables = await db
-    .from('reservations')
-    .select('table_id')
-    .where('reservation_date', date)
-    .whereNot('status', 'cancelled')
-    .where((query) => {
-      query
-        .whereRaw('time_slot < ?', [requestedEnd])
-        .andWhereRaw('time_slot_end > ?', [requestedStart])
-    })
-
-  const bookedTableIds = busyTables.map((r) => r.table_id)
-  const availableTables = await Table.query()
-    .whereNotIn('id', bookedTableIds)
-    .where('is_available',true)
-    .where('capacity', '>=', guests)
-  return {
-    status:true,
-    availableTables
-  }
-}
-
-async store({ user, request, response }: HttpContext) {
-  const payload = await request.validateUsing(createReservationValidator)
-
-  const startTime = DateTime.fromFormat(payload.timeSlot, 'HH:mm')
-  const endTime = startTime.plus({ hours: 2 })
-
-  const conflict = await Reservation.query()
-    .where('table_id', payload.tableId)
-    .where('reservation_date', payload.reservationDate)
-    .whereNot('status', 'cancelled')
-    .where((query) => {
-      query
-        .whereRaw('time_slot < ?', [endTime.toFormat('HH:mm')])
-        .andWhereRaw('time_slot_end > ?', [payload.timeSlot])
-    })
-    .first()
-
-  if (conflict) {
-    return response.conflict({ message: 'This table is occupied during part of your selected time.' })
+  async checkAvailability({ request }: HttpContext) {
+    const payload = await request.validateUsing(availabilityValidator)
+    const availableTables = await this.repository.availabilityCheck(payload)
+    return {
+      status:true,
+      availableTables
+    }
   }
 
-  const reservation = await Reservation.create({
-    ...payload,
-    userId: user!.id,
-    reservationDate: DateTime.fromISO(payload.reservationDate),
-    timeSlotEnd: endTime.toFormat('HH:mm'),
-    status: 'pending'
-  })
-
-  return {
-    status:true,
-    reservation
+  async store({ user, request }: HttpContext) {
+    const payload = await request.validateUsing(createReservationValidator)
+    const reservation = await this.repository.createReservation(payload,user!)
+    return {
+      status:true,
+      reservation
+    }
   }
-}
 
-async index({ request }: HttpContext) {
-    const payload = await request.validateUsing(reservationQueryValidator)
-    
-    const page = payload.page || 1
-    const limit = payload.limit || 15
-    const selectedDate = payload.date || DateTime.now().toISODate()
+  async index({ request }: HttpContext) {
+      const payload = await request.validateUsing(reservationQueryValidator)
+      const reservations = await this.repository.listReservationByDate(payload)
+      return {
+        status:true,
+        reservations
+      }
+  }
 
-    const reservations = await Reservation.query()
-        .where('reservation_date', selectedDate!)
-        .preload('user', (q) => q.select('id', 'fullName', 'phoneNumber'))
-        .preload('table')
-        .preload('order')
-        .orderBy('time_slot', 'asc')
-        .paginate(page, limit)
-    
+  async myReservations({ user, request }: HttpContext) {
+    const params = await request.validateUsing(paginationValidator)
+
+    const reservations = await this.repository.listMyReservation(params,user!)
     return {
       status:true,
       reservations
     }
-}
-
-async myReservations({ user, request }: HttpContext) {
-  const { page = 1, limit = 10 } = await request.validateUsing(paginationValidator)
-
-  const reservations = await Reservation.query()
-    .where('user_id', user!.id)
-    .orderBy('time_slot', 'desc')
-    .preload('table') 
-    .preload('order', (q) => {
-      q.preload('items', (iq) => iq.preload('menuItem')) 
-    })
-    .paginate(page, limit)
-
-  return {
-    status:true,
-    reservations
   }
-}
 
-    async updateStatus({ params, request }: HttpContext) {
-        const reservation = await Reservation.findOrFail(params.id)
-        const { status } = await request.validateUsing(updateReservationStatusValidator)
-        reservation.status = status
-        await reservation.save()
-        return { 
-          status:true,
-          message: 'Status updated', 
-          reservation 
-        }
+  async updateStatus({ request }: HttpContext) {
+    const payload = await request.validateUsing(updateReservationStatusValidator)
+    const reservation = await this.repository.updateReservationStatus(payload)
+    return { 
+      status:true,
+      message: 'Status updated', 
+      reservation 
     }
+  }
 }
