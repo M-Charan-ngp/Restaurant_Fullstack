@@ -23,8 +23,10 @@ export default class menuRepository{
         return item;
     }
     async updateMenu(payload:UpdateMenuDataDto){
-        const item = await MenuItem.findOrFail(payload.params.id)
-        item.merge(payload)
+        const id = payload.params.id
+        const item = await MenuItem.findOrFail(id)
+        const { params, ...data } = payload;
+        item.merge(data)
         await item.save()
         return item;
     }

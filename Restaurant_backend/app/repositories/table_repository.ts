@@ -25,8 +25,9 @@ export default class tableRepository{
     }
 
     async updateTable(payload:UpdateTableDataDto){
-        const table = await Table.findOrFail(payload.params.id)
-        table.merge(payload)
+        const {params, ...data} = payload
+        const table = await Table.findOrFail(params.id)
+        table.merge(data)
         await table.save()
         return table;
     }

@@ -23,6 +23,7 @@ router.group(() => {
       router.post('/orders', [OrdersController, 'store'])
       router.patch('/orders/:id/cancel', [OrdersController, 'cancel']).where('id', router.matchers.number())
       router.get('/my-orders', [OrdersController, 'index'])
+      
     })
     .prefix('/customer')
     .use(middleware.role([1, 2, 3]))
