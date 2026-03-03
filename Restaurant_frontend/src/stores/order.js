@@ -94,7 +94,15 @@ export const useOrderStore = defineStore('order', () => {
             loading.value = false
         }
     }
-
+    const cancelMyOrder = async (orderId) => {
+        try {
+            await CustomerService.cancelOrder(orderId)
+            return {success:true}
+        }catch(err){
+            console.log(err);
+            return { success: false, error: "Cancellation failed"}
+        }
+    }
     const updateProgress = async (orderId, status) => {
         try {
             await StaffService.updateOrderStatus(orderId, status)
@@ -116,6 +124,7 @@ export const useOrderStore = defineStore('order', () => {
         pagination,
 
         cartTotal,
+        cancelMyOrder,
         cartCount,
         addToCart,
         removeFromCart,

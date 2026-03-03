@@ -44,6 +44,7 @@ api.interceptors.response.use(
                     }
                     authStore.logout(); 
                     if (window.location.pathname !== '/login') {
+                        $toast.error("Session expired. Redirecting...",{position:"top-right"})   
                         window.location.href = '/login';
                     }
                     break;

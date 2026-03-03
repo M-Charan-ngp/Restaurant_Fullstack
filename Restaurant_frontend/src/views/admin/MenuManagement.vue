@@ -87,7 +87,7 @@ const handleSave = async () => {
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn variant="text" @click="showDialog = false">Cancel</v-btn>
-          <v-btn color="primary" @click="handleSave" :loading="menuStore.loading">Save Changes</v-btn>
+          <v-btn color="primary" @click="handleSave" :loading="menuStore.loading">Save</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

@@ -8,6 +8,10 @@ const getStatusColor = (status) => {
   const map = { pending: 'warning', cooking: 'info', served: 'success', paid: 'grey', cancelled: 'error' }
   return map[status] || 'grey'
 }
+const cancelOrder = async (id) => {
+  await orderStore.cancelMyOrder(id)
+  orderStore.fetchMyOrders()
+}
 </script>
 
 <<template>
@@ -32,13 +36,13 @@ const getStatusColor = (status) => {
       <v-row no-gutters align="center" class="w-100">
         <v-col cols="6" sm="3">
           <div class="text-subtitle-2 font-weight-bold">Order #{{ order.id }}</div>
-          <div class="text-caption text-medium-emphasis">Table {{ order.reservation?.table?.tableNumber || 'N/A' }}</div>
+          <div class="text-caption text-medium-emphasis">Table {{ order.reservation?.table || 'N/A' }}</div>
         </v-col>
 
         <v-col cols="6" sm="4">
           <div class="d-flex align-center mb-1">
             <v-icon size="16" class="mr-1" color="grey">mdi-calendar-range</v-icon>
-            <span class="text-body-2 font-weight-medium">{{ formatDate(order.reservation?.reservationDate) }}</span>
+            <span class="text-body-2 font-weight-medium">{{ formatDate(order.reservation.date) }}</span>
           </div>
           <div class="d-flex align-center">
             <v-icon size="16" class="mr-1" color="grey">mdi-clock-outline</v-icon>
@@ -68,17 +72,22 @@ const getStatusColor = (status) => {
         <v-list lines="one" class="bg-transparent pa-0">
           <v-list-item v-for="item in order.items" :key="item.id" class="px-0 border-b-thin">
             <v-list-item-title class="text-body-2">
-              <span class="font-weight-bold text-primary">{{ item.quantity }}x</span> {{ item.menuItem?.name }}
+              <span class="font-weight-bold text-primary">{{ item.quantity }}x</span> {{ item.name }}
             </v-list-item-title>
             <template v-slot:append>
               <span class="text-body-2 font-weight-medium">
-                ₹{{ (item.quantity * parseFloat(item.unitPrice)).toFixed(2) }}
+                ₹{{ (item.quantity * parseFloat(item.price)).toFixed(2) }}
               </span>
             </template>
           </v-list-item>
         </v-list>
-        <div class="d-flex justify-end mt-4">
-        </div>
+        <v-btn 
+          v-if="order.status=='pending'" 
+          color="error"
+          @click="cancelOrder(order.id)"
+          >
+          Cancel Order
+        </v-btn>
       </div>
     </v-expansion-panel-text>
   </v-expansion-panel>

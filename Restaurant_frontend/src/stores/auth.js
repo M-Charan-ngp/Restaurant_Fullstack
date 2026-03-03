@@ -3,7 +3,10 @@ import { ref, computed } from 'vue'
 import Cookies from 'js-cookie'
 import { jwtDecode } from 'jwt-decode'
 import { AuthService } from '@/services/api_services'
+import {useToast} from 'vue-toast-notification';
+import 'vue-toast-notification/dist/theme-sugar.css';
 
+const $toast = useToast();
 export const useAuthStore = defineStore('auth', () => {
     const token = ref(Cookies.get('auth_token') || null)
     const user = ref(null)
@@ -36,7 +39,7 @@ export const useAuthStore = defineStore('auth', () => {
         if (typeof newToken !== 'string') return
         
         token.value = newToken
-        Cookies.set('auth_token', newToken, { expires: 7, sameSite: 'strict' })
+        Cookies.set('auth_token', newToken, { expires: 1, sameSite: 'strict' })
         decodeAndSetUser(newToken)
     }
 
@@ -78,7 +81,7 @@ export const useAuthStore = defineStore('auth', () => {
         token.value = null
         user.value = null
         Cookies.remove('auth_token')
-        
+        //$toast.error("Please Login to access the page",{position:"top-right"})
         window.location.href = '/login'
     }
     const setTheme = (color) => {

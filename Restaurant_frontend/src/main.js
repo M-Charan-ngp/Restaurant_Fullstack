@@ -10,7 +10,6 @@ import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 import ToastPlugin from 'vue-toast-notification';
 import 'unfonts.css'
-
 import App from './App.vue'
 import router from './router'
 const vuetify = createVuetify({

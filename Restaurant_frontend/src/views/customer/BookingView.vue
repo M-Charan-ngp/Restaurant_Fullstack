@@ -1,23 +1,47 @@
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, computed } from 'vue'
 import { useReservationStore } from '@/stores/reservation'
 import { useRouter } from 'vue-router'
 import {useToast} from 'vue-toast-notification';
+import { VDateInput } from 'vuetify/labs/VDateInput'
 import 'vue-toast-notification/dist/theme-sugar.css';
 const $toast = useToast();
 const reservationStore = useReservationStore()
 const router = useRouter()
 const allowedMinutes = v => v == 0 || v == 30
 const step = ref(1)
+const showDialog = ref(false)
+const today = computed(() => {
+  const d = new Date()
+  return d.toISOString().split('T')[0] 
+})
+
 const form = reactive({
-  date: new Date().toISOString().substr(0, 10),
+  date: new Date().toISOString().split('T')[0],
   timeSlot: '18:00',
   guestCount: 2,
   tableId: null
 })
+const formatLocalDate = (date) => {
+  const d = new Date(date)
+  const year = d.getFullYear()
+  const month = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+const formattedDate = computed(() => {
+  if (!form.date) return ''
+  
+  const d = new Date(form.date)
+  const day = String(d.getDate()).padStart(2, '0')
+  const month = String(d.getMonth() + 1).padStart(2, '0')
+  const year = d.getFullYear()
+  
+  return `${day}-${month}-${year}`
+})
 const searchTables = async () => {
   const response = await reservationStore.getAvailableTables({
-    date: form.date,
+    date: formatLocalDate(form.date),
     timeSlot: form.timeSlot,
     guests: form.guestCount
   })
@@ -38,6 +62,7 @@ const confirmBooking = async () => {
     $toast.error(res.error,{position:"top-right"})
   }
 }
+
 </script>
 
 <template>
@@ -47,36 +72,33 @@ const confirmBooking = async () => {
         <v-card title="Reserve your table" flat>
           <v-row>
             <v-col cols="12" md="4">
-              <v-text-field v-model="form.date" label="Date" type="date" variant="outlined" />
+              <v-date-input 
+              v-model="form.date" 
+              label="Date" 
+              variant="outlined" 
+              :display-value="formattedDate"
+              :min="today"></v-date-input>
             </v-col>
             <v-col cols="11" sm="5">
               <v-text-field
                 v-model="form.timeSlot"
-                label="Select Time"
+                label="Slot"
+                variant="outlined"
                 prepend-icon="mdi-clock-time-four-outline"
                 readonly
               >
-                <v-menu
-                  v-model="menuVisible"
-                  activator="parent"
-                  :close-on-content-click="false"
-                  transition="scale-transition"
-                >
-                  <v-time-picker
-                    v-if="menuVisible"
-                    v-model="form.timeSlot"
+                <v-dialog v-model="showDialog" activator="parent" width="auto">
+                  <v-time-picker 
+                    v-model="form.timeSlot" 
                     format="24hr"
-                    scrollable
                     min="09:00"
-                    max="21:00"
-                    :allowed-minutes="allowedMinutes"
-                    @update:model-value="menuVisible = false"
-                  ></v-time-picker>
-                </v-menu>
+                    max="20:00"
+                    :allowed-minutes="allowedMinutes"></v-time-picker>
+                </v-dialog>
               </v-text-field>
             </v-col>
             <v-col cols="12" md="4">
-              <v-text-field v-model="form.guestCount" label="Guests" type="number" variant="outlined" />
+              <v-text-field v-model="form.guestCount" label="Guests" min="1" type="number" variant="outlined" />
             </v-col>
           </v-row>
           <v-btn block color="primary" @click="searchTables" :loading="reservationStore.loading">

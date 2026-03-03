@@ -7,12 +7,12 @@ export function authMiddleware(to, from, next) {
     const currentTime = Math.floor(Date.now() / 1000)
 
     if (!authStore.token) {
-        $toast.error("Please Login to access the page",{position:"top-right"})
+        $toast.error("Please Login",{position:"top-right"})
         return next('/login')
     }
 
     if (authStore.user && authStore.user.exp < currentTime) {
-        $toast.error("Your session has expired. Please log in again.",{position:"top-right"})
+        alert("Your session has expired. Please log in again.",{position:"top-right"})
         authStore.logout() 
         return next('/login')
     }

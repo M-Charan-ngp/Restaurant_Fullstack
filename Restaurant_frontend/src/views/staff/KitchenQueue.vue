@@ -38,12 +38,8 @@ const getStatusColor = (status) => {
             </template> 
             
             <v-card-title class="d-flex align-center">
-              Table {{ order.reservation?.table?.tableNumber }}
+              Table {{ order.reservation?.table }}
               <v-spacer></v-spacer>
-              <span class="text-caption text-medium-emphasis">
-                <v-icon size="small" icon="mdi-account-group" start></v-icon>
-                {{ order.reservation?.guestCount }}
-              </span>
             </v-card-title> 
 
             <v-card-subtitle class="mt-1">
@@ -55,7 +51,7 @@ const getStatusColor = (status) => {
               </div>
               <div class="text-caption">
                 <v-icon size="x-small" icon="mdi-calendar" start></v-icon>
-                {{ formatDate(order.reservation?.reservationDate) }} | Order #{{ order.id }}
+                {{ formatDate(order.reservation?.date) }} | Order #{{ order.id }}
               </div>
             </v-card-subtitle> 
           </v-card-item> 
@@ -65,7 +61,7 @@ const getStatusColor = (status) => {
               <template v-slot:prepend> 
                 <v-badge color="primary" :content="item.quantity" inline></v-badge> 
               </template> 
-              <v-list-item-title class="ml-2">{{ item.menuItem?.name }}</v-list-item-title> 
+              <v-list-item-title class="ml-2">{{ item.name }}</v-list-item-title> 
             </v-list-item> 
           </v-list> 
  

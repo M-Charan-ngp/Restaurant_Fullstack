@@ -26,9 +26,12 @@ const getStatusColor = (status) => {
       <v-expansion-panel v-for="res in resStore.myReservations" :key="res.id">
         <v-expansion-panel-title>
           <div class="d-flex align-center w-100">
-            <span class="font-weight-bold">{{ formatDate(res.reservationDate) }}</span>
+            <v-icon size="16" class="mr-1" color="grey">mdi-calendar-range</v-icon>
+            <span class="font-weight-bold">{{ formatDate(res.date) }}</span>
             <v-divider vertical class="mx-4" />
+            <v-icon size="16" class="mr-1" color="grey">mdi-clock-outline</v-icon>
             <span>{{ formatTime(res.timeSlot) }}</span>
+            <span>-{{ formatTime(res.timeSlotEnd) }}</span>
             <v-spacer />
             <v-chip :color="getStatusColor(res.status)" size="small" class="text-uppercase">
               {{ res.status }}
@@ -39,7 +42,7 @@ const getStatusColor = (status) => {
         <v-expansion-panel-text>
           <v-list density="compact">
             <v-list-item prepend-icon="mdi-table-chair">
-              Table Number: <strong>{{ res.table?.tableNumber }}</strong>
+              Table Number: <strong>{{ res.tableNumber }}</strong>
             </v-list-item>
             <v-list-item prepend-icon="mdi-account-group">
               Size: <strong>{{ res.guestCount }} People</strong>

@@ -1,14 +1,13 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
 import { useReservationStore } from '@/stores/reservation'
-import { formatTime } from '@/utils/formats'
 const reservationStore = useReservationStore()
 const selectedDate = ref(new Date().toISOString().substr(0, 10))
 const statuses = ['pending', 'confirmed', 'arrived', 'cancelled', 'completed']
 const headers = [
         { title: 'Time', key: 'timeSlot' },
-        { title: 'Customer', key: 'user.fullName' },
-        { title: 'Table', key: 'table.tableNumber' },
+        { title: 'Customer', key: 'customer' },
+        { title: 'Table', key: 'tableNumber' },
         { title: 'Guests', key: 'guestCount' },
         { title: 'Status', key: 'status' },
         { title: 'Actions', key: 'actions', sortable: false }
