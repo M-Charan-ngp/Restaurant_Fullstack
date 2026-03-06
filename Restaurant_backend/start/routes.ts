@@ -13,7 +13,8 @@ router.group(() => {
   router.post('/login', [AuthController, 'login'])
 
   router.group(() => {
-
+    router.post('/profile/upload', [AuthController, 'uploadProfile'])
+    router.get('/auth/me', [AuthController, 'myDetails'])
     // CUSTOMER ROUTES (Role ID: 1, 2, 3)
     router.group(() => {
       router.get('/availability', [ReservationsController, 'checkAvailability'])
@@ -48,6 +49,7 @@ router.group(() => {
       router.patch('/tables/:id', [TablesController, 'update']).where('id', router.matchers.number())
       router.patch('/table/:id/toggle',[TablesController,'toggleAvailability']).where('id', router.matchers.number())
       router.patch('/menu/:id/toggle', [MenuController, 'toggleAvailability']).where('id', router.matchers.number())
+      router.post('menu/:id/image', [MenuController, 'addImage'])
     })
     .prefix('/admin')
     .use(middleware.role([3]))

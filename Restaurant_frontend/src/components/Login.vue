@@ -1,13 +1,14 @@
 <script setup>
 import { useAuthStore } from '../stores/auth'
 import { computed, ref } from 'vue'
+import { useToast } from 'vue-toast-notification'
+const $toast = useToast();
 const emit = defineEmits(['login-success'])
 
 const authStore = useAuthStore()
 const themeColor = computed(() => authStore.themeColor)
 const loading = ref(false)
 
-// We assume these are passed from a parent "AuthView" via v-model
 const credentials = defineModel({ required: true })
 
 const emailrule = [
@@ -25,7 +26,7 @@ const handlesubmit = async () => {
         if (result.success) {
             emit('login-success') 
         } else {
-            console.error(result.error)
+            $toast.error(result.error, {position:"top-right"})
         }
     }
 }

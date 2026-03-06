@@ -16,6 +16,10 @@ export const CustomerService = {
   placeOrder: (payload) => api.post('/customer/orders', payload),
   cancelOrder: (orderId) => api.patch(`/customer/orders/${orderId}/cancel`),
   getMyOrders: (page = 1) => api.get(`/customer/my-orders?page=${page}`),
+  uploadProfilePicture: (formData) => api.post('/profile/upload', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
+  me: () => api.get('/auth/me'),
 }
 
 export const StaffService = {
@@ -45,4 +49,7 @@ export const AdminService = {
   updateTable: (id, payload) => api.patch(`/admin/tables/${id}`, payload),
   toggleMenuAvailability: (id) => api.patch(`/admin/menu/${id}/toggle`),
   toggleTableAvailability: (id) => api.patch(`/admin/table/${id}/toggle`),
+  uploadMenuImage: (id, formData) => api.post(`/admin/menu/${id}/image`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
 }

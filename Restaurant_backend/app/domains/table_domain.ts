@@ -1,3 +1,5 @@
+import { Exception } from "@adonisjs/core/exceptions"
+
 export default class TableEntity {
   public readonly id: number
   public readonly tableNumber: string
@@ -5,12 +7,14 @@ export default class TableEntity {
   public readonly isAvailable: boolean
 
   constructor(data: any) {
-    if (!data.id) throw new Error('Domain Error: Invalid Table ID')
+    if (!data.id) throw new Exception('Domain Error: Invalid Table ID',{
+      status: 400,
+      code:"DOMAIN_ERROR"
+    })
 
     this.id = data.id
     this.tableNumber = data.tableNumber
     this.capacity = Number(data.capacity)
-    
     this.isAvailable = Boolean(data.isAvailable)
   }
 

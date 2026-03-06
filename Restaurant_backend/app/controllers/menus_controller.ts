@@ -1,5 +1,5 @@
 import { HttpContext } from '@adonisjs/core/http'
-import { createMenuValidator, updateMenuValidator, availabilityToggleValidator } from '#validators/menu_validator'
+import { createMenuValidator, updateMenuValidator, menuImageValidator, availabilityToggleValidator } from '#validators/menu_validator'
 import { paginationValidator } from '#validators/common_validator'
 import menuRepository from '../repositories/menu_repository.js'
 import { inject } from '@adonisjs/core'
@@ -46,8 +46,7 @@ constructor(protected repository: menuRepository) {}
     }
   }
 
-  async update({ params, request }: HttpContext) {
-    
+  async update({ params, request }: HttpContext) { 
     const payload = await request.validateUsing(updateMenuValidator, {
       meta: { itemId: params.id }
     })
@@ -57,6 +56,16 @@ constructor(protected repository: menuRepository) {}
       status:true,
       message: 'Menu item updated successfully',
       item
+    }
+  }
+  async addImage({ request }:HttpContext){
+    const payload = await request.validateUsing(menuImageValidator)
+    const updatedMenu = await this .repository.updateMenuImage(payload.menu_image,payload.params.id)
+    const item = new MenuEntity(updatedMenu)
+    return{
+      status: true,
+      message: 'Image Added Successfully',
+      user: item
     }
   }
  

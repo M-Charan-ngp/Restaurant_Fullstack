@@ -1,6 +1,9 @@
 import { paginationDataDto } from "#validators/common_validator";
 import { MenuDataDto, UpdateMenuDataDto } from "#validators/menu_validator";
 import MenuItem from "#models/menu_item";
+import { cuid } from '@adonisjs/core/helpers'
+import { readFile } from 'node:fs/promises'
+import drive from '@adonisjs/drive/services/main'
 
 export default class menuRepository{
 
@@ -35,5 +38,26 @@ export default class menuRepository{
         item.isAvailable = !item.isAvailable
         await item.save()
         return item;
+    }
+
+    async updateMenuImage(image: any, id: number) {
+        const item = await MenuItem.findOrFail(id)
+        const fileName = `${cuid()}.${image.extname}`
+        const key = `menuImages/${fileName}`
+        const disk = drive.use('fs')
+        const fileBuffer = await readFile(image.tmpPath)
+        const oldKey = item.imagePath?.startsWith('/') 
+            ? item.imagePath.slice(1) 
+            : item.imagePath
+        if (oldKey && typeof oldKey === 'string') {
+            if (await disk.exists(oldKey)) {
+            await disk.delete(oldKey)
+            }
+        }
+        await disk.put(key, fileBuffer)
+        item.imagePath = key
+        await item.save()
+
+        return item
     }
 }

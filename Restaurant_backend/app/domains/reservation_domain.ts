@@ -1,3 +1,5 @@
+import { Exception } from "@adonisjs/core/exceptions"
+
 export default class ReservationEntity {
     public readonly id: number
     public readonly date: string
@@ -9,7 +11,10 @@ export default class ReservationEntity {
     public readonly tableNumber: string | null
 
   constructor(data: any) {
-    if (!data.id) throw new Error('Domain Error: Invalid Reservation ID')
+    if (!data.id) throw new Exception('Domain Error: Invalid Reservation ID',{
+      status: 400,
+      code: "DOMAIN_ERROR",
+    })
 
     this.id = data.id
     this.date = data.reservationDate

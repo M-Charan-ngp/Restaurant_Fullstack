@@ -5,14 +5,14 @@ import { jwtDecode } from 'jwt-decode'
 import { AuthService } from '@/services/api_services'
 import {useToast} from 'vue-toast-notification';
 import 'vue-toast-notification/dist/theme-sugar.css';
+import { CustomerService } from '@/services/api_services'
 
-const $toast = useToast();
 export const useAuthStore = defineStore('auth', () => {
     const token = ref(Cookies.get('auth_token') || null)
     const user = ref(null)
     const themeColor = ref(localStorage.getItem('app_theme') || '#1976D2')
     const isAuthenticated = computed(() => !!token.value && !!user.value)
-    
+    let refreshPromise = null
     const isCustomer = computed(() => Number(user.value?.role) === 1)
     const isStaff = computed(() => Number(user.value?.role) === 2)
     const isAdmin = computed(() => Number(user.value?.role) === 3)
@@ -26,13 +26,34 @@ export const useAuthStore = defineStore('auth', () => {
             logout()
         }
     }
+    
 
 
-    const init = () => {
+    const fetchFreshUser = async () => {
+        if (refreshPromise) return refreshPromise
+        refreshPromise = (async () => {
+            try {
+                const response = await CustomerService.me()
+                if (response.data.status) {
+                    user.value = { ...user.value, ...response.data.user }
+                }
+            } catch (err) {
+                console.error("Refresh failed", err)
+            } finally {
+                refreshPromise = null
+            }
+        })()
+
+        return refreshPromise
+    }
+
+    const init = async () => {
         if (token.value) {
             decodeAndSetUser(token.value)
+            await fetchFreshUser()
         }
     }
+    
 
 
     const saveLogin = (newToken) => {
@@ -88,6 +109,22 @@ export const useAuthStore = defineStore('auth', () => {
         themeColor.value = color
         localStorage.setItem('app_theme', color)
     }
+    const updateProfilePic = async (formData) => {
+        try {
+            const response = await CustomerService.uploadProfilePicture(formData)
+            if (response.data.status) {
+                user.value = { ...user.value, ...response.data.user }
+                return { success: true }
+            }
+            return { success: false, error: "Upload failed" }
+        } catch (err) {
+            console.error("Axios Error Details:", err)
+            return { 
+                success: false, 
+                error: err.response?.data?.message || "Upload failed" 
+            }
+        }
+    }
 
     init()
 
@@ -97,9 +134,11 @@ export const useAuthStore = defineStore('auth', () => {
         user,
         themeColor,
         isAuthenticated,
+        updateProfilePic,
         isCustomer,
         isStaff,
         isAdmin,
+        fetchFreshUser,
         login,
         register,
         logout,

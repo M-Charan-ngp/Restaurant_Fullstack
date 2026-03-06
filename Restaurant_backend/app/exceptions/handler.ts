@@ -31,6 +31,21 @@ export default class HttpExceptionHandler extends ExceptionHandler {
       })
     }
     if(error.status === "BAD_REQUEST"){
+      console.log(error)
+      return ctx.response.status(400).send({
+        status: false,
+        message: error.message
+      })
+    }
+    // Domain Errors
+    if (error.code === 'DOMAIN_ERROR') {
+      return ctx.response.status(500).send({
+        status: false,
+        code: error.code,
+        message: error.message,
+      })
+    }
+    if(error.status === "INVALID_CREDENTIALS"){
       return ctx.response.status(401).send({
         status: false,
         message: error.message

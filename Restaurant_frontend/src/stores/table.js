@@ -11,7 +11,6 @@ export const useTableStore = defineStore('table', () => {
         try {
             const response = await AdminService.getTables(page)
             tables.value = response.data.tables.data
-            console.log("table fetched successfully",tables.value)
             return { success: true }
         } catch (err) {
             return { success: false, error: "Failed to load tables" }
@@ -57,7 +56,6 @@ export const useTableStore = defineStore('table', () => {
                     isAvailable: newValue
                 }
             }
-            console.log("table status changed successfully")
             
             return { success: true }
 

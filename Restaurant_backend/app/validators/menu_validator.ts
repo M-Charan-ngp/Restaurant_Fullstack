@@ -10,6 +10,21 @@ export const createMenuValidator = vine.compile(
     isAvailable: vine.boolean().optional()
   })
 )
+
+export const menuImageValidator = vine.compile(
+  vine.object({
+    params: vine.object({
+      id:vine.number().exists(async(db,value)=>{
+        const match = await db.from('menu_items').where('id',value).first()
+        return !!match
+      })
+    }),
+    menu_image: vine.file({
+      size: '2mb',
+      extnames: ['jpg', 'png', 'jpeg'],
+    }),
+  })
+)
 export const availabilityToggleValidator = vine.compile(
   vine.object({
     params: vine.object({

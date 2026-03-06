@@ -18,5 +18,14 @@ export const loginValidator = vine.compile(
   })
 )
 
+export const profilePictureValidator = vine.compile(
+  vine.object({
+    profile_picture: vine.file({
+      size: '2mb',
+      extnames: ['jpg', 'png', 'jpeg'],
+    }),
+  })
+)
+
 export type UserDataDto = Infer<typeof signupValidator>
 export type LoginDataDto = Infer<typeof loginValidator>

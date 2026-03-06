@@ -23,6 +23,9 @@ export default class User extends BaseModel {
   @column()
   declare roleId: number
 
+  @column()
+  declare profilePath: string
+
   @column.dateTime({ autoCreate: true, serializeAs: null })
   declare createdAt: DateTime
 

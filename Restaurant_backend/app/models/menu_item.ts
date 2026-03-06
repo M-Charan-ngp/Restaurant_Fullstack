@@ -22,6 +22,9 @@ export default class MenuItem extends BaseModel {
   @column()
   declare isAvailable: boolean
 
+    @column()
+  declare imagePath: string
+
   @column.dateTime({ autoCreate: true, serializeAs: null })
   declare createdAt: DateTime
 

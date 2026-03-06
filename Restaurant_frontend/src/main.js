@@ -21,7 +21,7 @@ const vuetify = createVuetify({
 const app = createApp(App)
 
 
-app.use(ToastPlugin,{position:'top'});
+app.use(ToastPlugin);
 app.use(createPinia())
 const authStore = useAuthStore()
 authStore.init()

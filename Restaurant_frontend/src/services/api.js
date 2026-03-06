@@ -36,15 +36,15 @@ api.interceptors.response.use(
         if (response) {
             switch (response.status) {
                 case 401:
+                  console.log(response)
                     const backendMessage = response.data?.error || "Unauthorized access";
                     console.warn(`Auth Error: ${backendMessage}`);
-
                     if (backendMessage.includes("API Key")) {
                         console.error("Critical: API Key issue detected.");
                     }
-                    authStore.logout(); 
                     if (window.location.pathname !== '/login') {
-                        $toast.error("Session expired. Redirecting...",{position:"top-right"})   
+                        $toast.error("Session expired. Redirecting...",{position:"top-right"}) 
+                        authStore.logout();   
                         window.location.href = '/login';
                     }
                     break;

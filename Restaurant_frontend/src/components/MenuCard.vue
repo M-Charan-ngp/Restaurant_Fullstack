@@ -2,27 +2,66 @@
 defineProps(['item'])
 defineEmits(['add'])
 </script>
-
 <template>
-  <v-card class="mx-auto flex-column d-flex" height="100%" elevation="2">
+  <v-card 
+    class="mx-auto flex-column d-flex overflow-hidden" 
+    height="100%" 
+    elevation="2"
+    rounded="xl"
+  >
+    <v-img
+      v-if="item.imagePath"
+      :src="item.imagePath"
+      height="180"
+      cover
+      class="align-end text-white"
+    >
+      <template v-slot:placeholder>
+        <v-row class="fill-height ma-0" align="center" justify="center">
+          <v-progress-circular indeterminate color="primary"></v-progress-circular>
+        </v-row>
+      </template>
+
+      <v-fade-transition>
+        <div v-if="!item.isAvailable" class="fill-height d-flex align-center justify-center bg-black-lighten-1 opacity-70" style="background: rgba(0,0,0,0.5)">
+           <v-chip color="white" variant="outlined" label class="font-weight-bold">SOLD OUT</v-chip>
+        </div>
+      </v-fade-transition>
+    </v-img>
+
+    <v-sheet 
+      v-else 
+      height="180" 
+      color="grey-lighten-4" 
+      class="d-flex align-center justify-center"
+    >
+      <v-icon size="64" color="grey-lighten-1">mdi-silverware-fork-knife</v-icon>
+    </v-sheet>
+
     <v-card-item>
-      <v-card-title>{{ item.name }}</v-card-title>
+      <div class="d-flex justify-space-between align-center">
+        <v-card-title class="text-truncate" style="max-width: 70%">{{ item.name }}</v-card-title>
+        <div class="text-subtitle-1 font-weight-bold color-primary">₹{{ item.price }}</div>
+      </div>
       <v-card-subtitle>
         {{ item.category }}
       </v-card-subtitle>
     </v-card-item>
 
-   <v-card-text class="flex-grow-1">
-      <div class="text-h6">₹{{ item.price }}</div>
+    <v-card-text class="flex-grow-1 pt-0">
+      <p class="text-caption text-grey-darken-1 line-clamp-2">
+        {{ item.description || 'No description available.' }}
+      </p>
     </v-card-text>
 
-    <v-divider class="mx-4 mb-1"></v-divider>
+    <v-divider class="mx-4"></v-divider>
 
-    <v-card-actions>
+    <v-card-actions class="pa-4">
       <v-btn
-        color="primary"
-        variant="text"
+        :color="item.isAvailable ? 'primary' : 'grey'"
+        :variant="item.isAvailable ? 'elevated' : 'tonal'"
         block
+        rounded="pill"
         prepend-icon="mdi-plus"
         :disabled="!item.isAvailable"
         @click="$emit('add')"
@@ -32,3 +71,12 @@ defineEmits(['add'])
     </v-card-actions>
   </v-card>
 </template>
+
+<style scoped>
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;  
+  overflow: hidden;
+}
+</style>

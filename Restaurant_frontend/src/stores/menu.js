@@ -107,6 +107,27 @@ const fetchMenuforStaff = async (page = 1,limit=10) => {
             return { success: false, error: "Update failed" }
         }
     }
+    const updateMenuItemImage = async (id, file) => {
+    try {
+        const formData = new FormData()
+        formData.append('menu_image', file)
+
+        const response = await AdminService.uploadMenuImage(id, formData)
+        
+        if (response.data.status) {
+            const index = menuItems.value.findIndex(item => item.id === id)
+            if (index !== -1) {
+                menuItems.value[index] = response.data.user 
+            }
+            return { success: true }
+        }
+    } catch (err) {
+        return { 
+            success: false, 
+            error: err.response?.data?.message || "Image upload failed" 
+        }
+    }
+}
 
     return {
 
@@ -118,7 +139,7 @@ const fetchMenuforStaff = async (page = 1,limit=10) => {
         fetchMenuforStaff,
         filteredItems,
         updateMenuItem,
-
+        updateMenuItemImage,
         fetchMenu,
         addMenuItem,
         toggleAvailability
