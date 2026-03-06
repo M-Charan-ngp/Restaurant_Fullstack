@@ -5,9 +5,11 @@ const $toast = useToast();
 export function authMiddleware(to, from, next) {
     const authStore = useAuthStore()
     const currentTime = Math.floor(Date.now() / 1000)
-
     if (!authStore.token) {
-        $toast.error("Please Login",{position:"top-right"})
+        if(window.location.pathname !== '/'){
+            $toast.error("Please Login",{position:"top-right"})
+        }
+
         return next('/login')
     }
 

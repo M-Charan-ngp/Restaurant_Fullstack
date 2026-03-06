@@ -3,12 +3,24 @@ import { onMounted } from 'vue'
 import { useMenuStore } from '@/stores/menu'
 import { useOrderStore } from '@/stores/order'
 import MenuCard from '@/components/MenuCard.vue'
+import { watch } from 'vue'
+
 
 const menuStore = useMenuStore()
+watch(() => menuStore.selectedCategory, () => {
+  menuStore.fetchMenu(1)
+})
 const orderStore = useOrderStore()
-
+const handlePageChange = async (newPage) => {
+  const result = await menuStore.fetchMenu(newPage)
+  
+  if (result.success) {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+}
 onMounted(() => {
   menuStore.fetchMenu()
+  console.log('Fetch menu called')
 })
 </script>
 
@@ -49,7 +61,19 @@ onMounted(() => {
         />
       </v-col>
     </v-row>
-
+    <v-row v-if="menuStore.pagination.lastPage > 1" class="mt-8">
+      <v-col cols="12" class="d-flex justify-center">
+        <v-pagination
+          v-model="menuStore.pagination.currentPage"
+          :length="menuStore.pagination.lastPage"
+          :total-visible="5"
+          @update:model-value="handlePageChange"
+          color="primary"
+          rounded="circle"
+          elevation="1"
+        ></v-pagination>
+      </v-col>
+    </v-row>
     <v-row v-if="!menuStore.loading && menuStore.filteredItems.length === 0">
       <v-col class="text-center">
         <v-icon size="64" color="grey">mdi-silverware-clean</v-icon>

@@ -6,7 +6,10 @@ export const AuthService = {
 }
 
 export const PublicService = {
-  getMenu: () => api.get('customer/menu'),
+  getMenu: (page, limit, category) => {
+    let url = `/customer/menu?page=${page}&limit=${limit}&category=${category}`
+    return api.get(url)
+  }
 }
 
 export const CustomerService = {
@@ -15,7 +18,7 @@ export const CustomerService = {
   getMyReservations: (page = 1) => api.get(`/customer/my-reservations?page=${page}`),
   placeOrder: (payload) => api.post('/customer/orders', payload),
   cancelOrder: (orderId) => api.patch(`/customer/orders/${orderId}/cancel`),
-  getMyOrders: (page = 1) => api.get(`/customer/my-orders?page=${page}`),
+  getMyOrders: (page) => api.get(`/customer/my-orders?page=${page}`),
   uploadProfilePicture: (formData) => api.post('/profile/upload', formData, {
     headers: { 'Content-Type': 'multipart/form-data' }
   }),

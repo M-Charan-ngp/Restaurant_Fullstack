@@ -7,13 +7,18 @@ import drive from '@adonisjs/drive/services/main'
 
 export default class menuRepository{
 
-    async listMenu(params:paginationDataDto){
-        const items = await MenuItem.query()
-            .where('is_available', true)
-            .orderBy('category', 'asc')
-            .paginate(params.page, params.limit)
-        return items
+    async listMenu(params: paginationDataDto) {
+    const query = MenuItem.query()
+    query.where('is_available', true)
+    if (params.category && params.category !== 'All') {
+        query.where('category', params.category)
     }
+    query.orderBy('category', 'asc').orderBy('name', 'asc')
+    const items = await query.paginate(params.page, params.limit)
+    return items
+    }
+
+
     async adminListMenu(params:paginationDataDto){
         const items = await MenuItem.query()
         .orderBy('category', 'asc')

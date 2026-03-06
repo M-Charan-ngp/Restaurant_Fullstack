@@ -10,7 +10,7 @@ export const useMenuStore = defineStore('menu', () => {
     const loading = ref(false)
     const pagination = ref({
         total: 0,
-        limit: 10,
+        limit: 9,
         currentPage: 1,
         lastPage: 1
     })
@@ -35,19 +35,23 @@ export const useMenuStore = defineStore('menu', () => {
         return items.value.filter(item => item.category === selectedCategory.value)
     })
 
-
-    const fetchMenu = async (page = 1) => {
+    const fetchMenu = async (page = 1, limit = 6) => {
         loading.value = true
         try {
-            const response = await PublicService.getMenu(page)
-            const { data, meta } = response.data.items
-            
-            items.value = data
-            pagination.value = meta
+            const categoryToFetch = selectedCategory.value
+            const response = await PublicService.getMenu(page, limit, categoryToFetch)
+            if (response && response.data) {
+                const { data, meta } = response.data.items
+                items.value = data
+                pagination.value.total = meta.total
+                pagination.value.limit = meta.perPage
+                pagination.value.currentPage = meta.currentPage
+                pagination.value.lastPage = meta.lastPage
+            }
             return { success: true }
         } catch (err) {
-            console.error("Menu fetch failed", err)
-            return { success: false, error: "Could not load menu" }
+            console.log(err)
+            return { success: false, error: "Failed to fetch menu" }
         } finally {
             loading.value = false
         }
@@ -131,7 +135,6 @@ const fetchMenuforStaff = async (page = 1,limit=10) => {
 }
 
     return {
-
         items,
         categories,
         selectedCategory,
