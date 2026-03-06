@@ -82,7 +82,6 @@ export default class orderRepository{
               .firstOrFail()
             if (order.status !== 'pending') {
                 throw {
-                        code: 401,
                         status: 'BAD_REQUEST',
                         message: 'Cannot cancel order. The kitchen has already started preparing your food.'
                 };
@@ -94,11 +93,11 @@ export default class orderRepository{
 
     async kitchenList(params: paginationDataDto){
         const orders = await Order.query()
-              .whereIn('status', ['pending', 'cooking'])
-              .preload('items', (q) => q.preload('menuItem'))
-              .preload('reservation', (q) => q.preload('table'))
-              .orderBy('created_at', 'asc')
-              .paginate(params.page, params.limit)
+                .whereIn('status', ['pending', 'cooking'])
+                .preload('items', (q) => q.preload('menuItem'))
+                .preload('reservation', (q) => q.preload('table'))
+                .orderBy('created_at', 'asc')
+                .paginate(params.page, params.limit)
         return orders;
     }
 }

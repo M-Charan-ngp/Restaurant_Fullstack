@@ -42,7 +42,7 @@ const handleImageUpload = async (itemId, file) => {
   
   const result = await menuStore.updateMenuItemImage(itemId, file)
   
-  if (result.status.success) {
+  if (result) {
     $toast.success("Image updated successfully")
   } else {
     $toast.error(result.error || "Upload failed")

@@ -113,13 +113,14 @@ const fetchMenuforStaff = async (page = 1,limit=10) => {
         formData.append('menu_image', file)
 
         const response = await AdminService.uploadMenuImage(id, formData)
-        
+        console.log(response.data.status)
         if (response.data.status) {
             const index = menuItems.value.findIndex(item => item.id === id)
             if (index !== -1) {
                 menuItems.value[index] = response.data.user 
             }
-            return { success: true }
+            await fetchMenuforStaff(pagination.value.currentPage, pagination.value.limit)
+            return true
         }
     } catch (err) {
         return { 

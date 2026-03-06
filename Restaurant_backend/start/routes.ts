@@ -15,6 +15,7 @@ router.group(() => {
   router.group(() => {
     router.post('/profile/upload', [AuthController, 'uploadProfile'])
     router.get('/auth/me', [AuthController, 'myDetails'])
+    
     // CUSTOMER ROUTES (Role ID: 1, 2, 3)
     router.group(() => {
       router.get('/availability', [ReservationsController, 'checkAvailability'])

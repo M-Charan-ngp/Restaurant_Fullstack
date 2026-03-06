@@ -43,19 +43,19 @@ export default class menuRepository{
     async updateMenuImage(image: any, id: number) {
         const item = await MenuItem.findOrFail(id)
         const fileName = `${cuid()}.${image.extname}`
-        const key = `menuImages/${fileName}`
+        const path = `menuImages/${fileName}`
         const disk = drive.use('fs')
         const fileBuffer = await readFile(image.tmpPath)
-        const oldKey = item.imagePath?.startsWith('/') 
+        const oldPath = item.imagePath?.startsWith('/') 
             ? item.imagePath.slice(1) 
             : item.imagePath
-        if (oldKey && typeof oldKey === 'string') {
-            if (await disk.exists(oldKey)) {
-            await disk.delete(oldKey)
+        if (oldPath && typeof oldPath === 'string') {
+            if (await disk.exists(oldPath)) {
+            await disk.delete(oldPath)
             }
         }
-        await disk.put(key, fileBuffer)
-        item.imagePath = key
+        await disk.put(path, fileBuffer)
+        item.imagePath = path
         await item.save()
 
         return item

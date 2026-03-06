@@ -22,11 +22,6 @@ defineEmits(['add'])
         </v-row>
       </template>
 
-      <v-fade-transition>
-        <div v-if="!item.isAvailable" class="fill-height d-flex align-center justify-center bg-black-lighten-1 opacity-70" style="background: rgba(0,0,0,0.5)">
-           <v-chip color="white" variant="outlined" label class="font-weight-bold">SOLD OUT</v-chip>
-        </div>
-      </v-fade-transition>
     </v-img>
 
     <v-sheet 
@@ -75,7 +70,6 @@ defineEmits(['add'])
 <style scoped>
 .line-clamp-2 {
   display: -webkit-box;
-  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;  
   overflow: hidden;
 }

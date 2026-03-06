@@ -32,7 +32,6 @@ export default class AuthRepository {
     const isPasswordValid = await hash.verify(user.password, Credentials.password)
     if (!isPasswordValid) {
       throw new Exception('Invalid Credentials',{
-        status:401,
         code:'INVALID_CREDENTIALS'
       })
     }
