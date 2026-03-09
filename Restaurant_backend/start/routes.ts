@@ -1,5 +1,6 @@
 import router from '@adonisjs/core/services/router'
 import { middleware } from '#start/kernel'
+import transmit from '@adonisjs/transmit/services/main'
 
 // Controllers
 const AuthController = () => import('#controllers/auth_controller')
@@ -7,6 +8,8 @@ const MenuController = () => import('#controllers/menus_controller')
 const TablesController = () => import('#controllers/tables_controller')
 const ReservationsController = () => import('#controllers/reservations_controller')
 const OrdersController = () => import('#controllers/order_controller')
+
+transmit.registerRoutes()
 
 router.group(() => {
   router.post('/signup', [AuthController, 'signup'])

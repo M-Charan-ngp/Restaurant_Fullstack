@@ -32,6 +32,7 @@ const menuItems = computed(() => {
   if (authStore.isStaff) {
     routes.push({ title: 'Reservations', icon: 'mdi-clipboard-list', to: '/staff/reservations' })
     routes.push({ title: 'Kitchen Queue', icon: 'mdi-chef-hat', to: '/staff/kitchen' })
+    routes.push({ title: 'Live Queue', icon: 'mdi-chef-hat', to: '/staff/live' })
   }
 
   if (authStore.isAdmin) {

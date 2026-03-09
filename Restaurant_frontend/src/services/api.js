@@ -12,14 +12,15 @@ const api = axios.create({
   },
 })
 
-api.interceptors.request.use((config) => {
+api.interceptors.request.use(async(config) => {
   const token = Cookies.get('auth_token')
   const authStore = useAuthStore()
   const currentTime = Math.floor(Date.now() / 1000)
   if (token) {
     if (authStore.user?.exp && authStore.user.exp < currentTime) {
-      authStore.logout()
       $toast.error("Session expired. Redirecting...",{position:"top-right"})
+      await new Promise(resolve => setTimeout(resolve, 2000))
+      authStore.logout()
       window.location.href = '/login'
       return Promise.reject('Token Expired')
     }
@@ -30,7 +31,7 @@ api.interceptors.request.use((config) => {
 
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async(error) => {
         const { response } = error;
         const authStore = useAuthStore(); 
         if (response) {
@@ -44,6 +45,7 @@ api.interceptors.response.use(
                     }
                     if (window.location.pathname !== '/login') {
                         $toast.error("Session expired. Redirecting...",{position:"top-right"}) 
+                        await new Promise(resolve => setTimeout(resolve, 2000))
                         authStore.logout();   
                         window.location.href = '/login';
                     }

@@ -50,6 +50,12 @@ const routes = [
         component: () => import('@/views/staff/StaffReservations.vue')
       },
       {
+        path: 'staff/live',
+        name: 'staff-live-orders',
+        beforeEnter: [staffMiddleware],
+        component: () => import('@/views/staff/LiveQueue.vue')
+      },
+      {
         path: 'staff/kitchen',
         name: 'staff-kitchen',
         beforeEnter: [staffMiddleware],

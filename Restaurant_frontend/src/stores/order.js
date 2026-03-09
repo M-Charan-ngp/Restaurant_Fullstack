@@ -13,15 +13,35 @@ export const useOrderStore = defineStore('order', () => {
         currentPage: 1,
         lastPage: 1
     })
+    const liveQueue = ref([])
 
     const cartTotal = computed(() => {
         return cart.value.reduce((sum, item) => sum + (item.price * item.quantity), 0)
     })
 
+
     const cartCount = computed(() => {
         return cart.value.reduce((sum, item) => sum + item.quantity, 0)
     })
 
+    const addToLiveQueue = (order) => {
+        if (!liveQueue.value.find(o => o.id === order.id)) {
+            liveQueue.value.unshift(order)
+        }
+        console.log(liveQueue)
+    }
+
+    const updateLiveStatus = (orderId, status) => {
+        const order = liveQueue.value.find(o => o.id === orderId)
+        if (order) order.status = status
+        
+        if (status === 'served') {
+            setTimeout(() => {
+                const index = liveQueue.value.findIndex(o => o.id === orderId)
+                if (index !== -1) liveQueue.value.splice(index, 1)
+            }, 5000) 
+        }
+    }
     const addToCart = (menuItem) => {
         const existingItem = cart.value.find(item => item.id === menuItem.id)
         if (existingItem) {
@@ -122,8 +142,11 @@ export const useOrderStore = defineStore('order', () => {
         kitchenOrders,
         loading,
         pagination,
+        liveQueue,
 
         cartTotal,
+        addToLiveQueue,
+        updateLiveStatus,
         cancelMyOrder,
         cartCount,
         addToCart,

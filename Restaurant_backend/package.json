@@ -57,6 +57,8 @@
     "@adonisjs/cors": "^2.2.1",
     "@adonisjs/drive": "^3.4.1",
     "@adonisjs/lucid": "^21.6.1",
+    "@adonisjs/transmit": "^2.0.2",
+    "@adonisjs/transmit-client": "^1.1.0",
     "@google-cloud/storage": "^7.19.0",
     "@vinejs/vine": "^3.0.1",
     "jsonwebtoken": "^9.0.3",

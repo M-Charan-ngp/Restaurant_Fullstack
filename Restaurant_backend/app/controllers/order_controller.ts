@@ -4,6 +4,8 @@ import { paginationValidator } from '#validators/common_validator'
 import orderRepository from '../repositories/order_repository.js'
 import { inject } from '@adonisjs/core'
 import OrderEntity from '../domains/order_domain.js'
+import OrderPlaced  from '#events/order_placed'
+import emitter from '@adonisjs/core/services/emitter'
 
 @inject()
 export default class OrdersController {
@@ -27,6 +29,7 @@ constructor(protected repository: orderRepository) {}
     const payload = await request.validateUsing(createOrderValidator)
     const rawOrder = await this.repository.createOrder(payload,user!)
     const order = new OrderEntity(rawOrder).toJSON()
+    await emitter.emit(OrderPlaced, new OrderPlaced(rawOrder))
     return { 
           status:true,
           message: 'Order placed successfully', 
